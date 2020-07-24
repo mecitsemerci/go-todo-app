@@ -28,7 +28,9 @@ Connections with external data resources (api, database etc.) are made through t
 We can add configuration processes and utilities here.
 
 ## Installation
-    https://github.com/mecitsemerci/clean-go-todo-api.git
+ Open your terminal and clone this repository.
+ 
+    git clone https://github.com/mecitsemerci/clean-go-todo-api.git
 
 If docker is running, run docker compose up command in the folder.
 
