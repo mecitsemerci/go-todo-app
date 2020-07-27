@@ -1,8 +1,8 @@
-package controllers
+package controller
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/mecitsemerci/clean-go-todo-api/app/api/dtos"
+	"github.com/mecitsemerci/clean-go-todo-api/app/api/dto"
 	"net/http"
 )
 
@@ -15,10 +15,16 @@ func (controller *HealthController) RegisterRoutes(apiRouteGroup *gin.RouterGrou
 	router.GET("/", controller.Healthy)
 
 }
-
+// Health check godoc
+// @Summary Check api status
+// @Description Get api healthy status
+// @Tags Health Check
+// @Accept json
+// @Produce json
+// @Success 200 {object} dto.HealthOutput
+// @Router /api/health [get]
 func (controller *HealthController) Healthy(ctx *gin.Context) {
-	status := dtos.HealthOutputDto{
+	ctx.JSON(http.StatusOK, dto.HealthOutput{
 		Status: "healthy",
-	}
-	ctx.JSON(http.StatusOK, status)
+	})
 }

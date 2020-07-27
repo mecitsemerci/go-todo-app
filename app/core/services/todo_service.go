@@ -3,7 +3,7 @@ package services
 import (
 	"github.com/google/uuid"
 	"github.com/mecitsemerci/clean-go-todo-api/app/core/domain/todo"
-	"github.com/mecitsemerci/clean-go-todo-api/app/infra/adapters/mementodb"
+	"github.com/mecitsemerci/clean-go-todo-api/app/infra/adapter/mementodb"
 )
 
 type IService interface {

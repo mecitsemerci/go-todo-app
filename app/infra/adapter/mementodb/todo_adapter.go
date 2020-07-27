@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"github.com/mecitsemerci/clean-go-todo-api/app/core/domain/todo"
-	"github.com/mecitsemerci/clean-go-todo-api/app/infra/utils"
+	"github.com/mecitsemerci/clean-go-todo-api/app/infra/utility"
 )
 
 type TodoAdapter struct{}
@@ -26,8 +26,8 @@ func (adapter *TodoAdapter) GetAll() ([]todo.Todo, error) {
 
 func (adapter *TodoAdapter) Insert(entity todo.Todo) (uuid.UUID, error) {
 	entity.Id = uuid.New()
-	entity.CreatedAt = utils.UtcNow()
-	entity.UpdatedAt = utils.UtcNow()
+	entity.CreatedAt = utility.UtcNow()
+	entity.UpdatedAt = utility.UtcNow()
 	todoCollection[entity.Id.String()] = entity
 	return entity.Id, nil
 }
@@ -37,7 +37,7 @@ func (adapter *TodoAdapter) Update(entity todo.Todo) (bool, error) {
 	if existingEntity, ok := todoCollection[entity.Id.String()]; ok {
 		updatedEntity := existingEntity
 		updatedEntity.Title = entity.Title
-		updatedEntity.UpdatedAt = utils.UtcNow()
+		updatedEntity.UpdatedAt = utility.UtcNow()
 		todoCollection[entity.Id.String()] = updatedEntity
 		return true, nil
 	}

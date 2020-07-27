@@ -1,11 +1,11 @@
-package dtos
+package todoDto
 
 import (
 	"github.com/mecitsemerci/clean-go-todo-api/app/core/domain/todo"
 	"time"
 )
 
-type TodoOutputDto struct {
+type TodoOutput struct {
 	Id        string    `json:"id"`
 	Title     string    `json:"title"`
 	IsDone    bool      `json:"is_done"`
@@ -13,8 +13,8 @@ type TodoOutputDto struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func (dto *TodoOutputDto) FromEntity(todo todo.Todo) TodoOutputDto {
-	return TodoOutputDto{
+func (dto *TodoOutput) FromEntity(todo todo.Todo) TodoOutput {
+	return TodoOutput{
 		Id:        todo.Id.String(),
 		Title:     todo.Title,
 		IsDone:    todo.IsDone,
