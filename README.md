@@ -40,5 +40,5 @@ Check the app is running on http://localhost:8080/swagger/index.html
 
  ## Swagger UI Preview
  
- ![image](./docs/img/swagger_ui.png)
+ ![image](./docs/img/Swagger_UI.png)
  
