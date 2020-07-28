@@ -5,9 +5,9 @@ This repository is a sample go lang web project built according to Clean Archite
 ## Build with
 * Gin Web Framework
 * Docker support
+* Swagger UI support
 * :soon: MongoDb support
 * :soon: Firebase support
-* :soon: Swagger UI support
 
 ### Layers and Dependencies
 
@@ -36,113 +36,9 @@ If docker is running, run docker compose up command in the folder.
 
     docker-compose up
 
-Check the app is running on http://localhost:8080
+Check the app is running on http://localhost:8080/swagger/index.html
 
- ## Sample Requests
+ ## Swagger UI Preview
  
- ### GET ALL TODO
+ ![image](./docs/img/Swagger_UI.png)
  
- Request
- 
-     GET /api/v1/todo HTTP/1.1
-     Host: localhost:8080
- 
-
- Response
-
-    [
-        {
-            "id": "2d554d6a-d908-4de8-929e-e9c4d487c6a0",
-            "title": "Todo1",
-            "is_done": false,
-            "created_at": "2020-07-24T21:06:31.726236Z",
-            "updated_at": "2020-07-24T21:06:31.726236Z"
-        },
-        {
-            "id": "6ba7b811-9dad-11d1-80b4-00c04fd430c8",
-            "title": "Todo2",
-            "is_done": true,
-            "created_at": "2020-07-24T21:06:31.726236Z",
-            "updated_at": "2020-07-24T21:06:31.726236Z"
-        }
-    ]
-
-### GET TODO
-
-Request
-
-    GET /api/v1/todo/2d554d6a-d908-4de8-929e-e9c4d487c6a0 HTTP/1.1
-    Host: localhost:8080
-
-Response
-
-    {
-        "id": "2d554d6a-d908-4de8-929e-e9c4d487c6a0",
-        "title": "Todo1",
-        "is_done": false,
-        "created_at": "2020-07-24T21:06:31.726236Z",
-        "updated_at": "2020-07-24T21:06:31.726236Z"
-    }
-
-### POST TODO
-
-Request
-
-    POST /api/v1/todo/ HTTP/1.1
-    Host: localhost:8080
-    Content-Type: application/json
-    
-    {
-        "title": "Shopping"
-    }
-
-Response
-
-    {
-        "todo_id": "fb067648-fd4f-41d6-8255-4d072907dc7b"
-    }
-
-### PUT TODO
-
-Request
-
-    PUT /api/v1/todo/2d554d6a-d908-4de8-929e-e9c4d487c6a0 HTTP/1.1
-    Host: localhost:8080
-    Content-Type: application/json
-    
-    {
-        "title": "Shopping",
-        "is_done": false
-    }
-
-Response
-
-    {
-        "result": true
-    }
-
-### DELETE TODO
-
-Request
-
-    DELETE /api/v1/todo/2d554d6a-d908-4de8-929e-e9c4d487c6a0 HTTP/1.1
-    Host: localhost:8080
-
-Response
-
-    {
-        "result": true
-    }
-
-## HEALTH CHECK
-
-Request
-
-    GET /api/health HTTP/1.1
-    Host: localhost:8080
-
-Response
-
-    {
-        "status": "healthy"
-    }

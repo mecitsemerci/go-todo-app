@@ -1,0 +1,246 @@
+basePath: /
+definitions:
+  dto.ErrorOutput:
+    properties:
+      code:
+        type: integer
+      details:
+        type: object
+      message:
+        type: string
+    type: object
+  dto.HealthOutput:
+    properties:
+      status:
+        example: healthy
+        type: string
+    type: object
+  todoDto.CreateTodoInput:
+    properties:
+      title:
+        type: string
+    required:
+    - title
+    type: object
+  todoDto.CreateTodoOutput:
+    properties:
+      todo_id:
+        type: string
+    type: object
+  todoDto.TodoOutput:
+    properties:
+      created_at:
+        example: "2020-07-28T07:32:32.71472Z"
+        type: string
+      id:
+        example: 6ba7b811-9dad-11d1-80b4-00c04fd430c8
+        type: string
+      is_done:
+        example: false
+        type: boolean
+      title:
+        example: Shopping
+        type: string
+      updated_at:
+        example: "2020-07-30T07:32:32.71472Z"
+        type: string
+    type: object
+  todoDto.UpdateTodoInput:
+    properties:
+      is_done:
+        type: boolean
+      title:
+        type: string
+    required:
+    - title
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a sample todo restful api server.
+  license: {}
+  title: Todo Example API
+  version: 1.0.0
+paths:
+  /api/health:
+    get:
+      consumes:
+      - application/json
+      description: Get api healthy status
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.HealthOutput'
+      summary: Check api status
+      tags:
+      - Health Check
+  /api/v1/todo:
+    get:
+      consumes:
+      - application/json
+      description: Get all todo array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/todoDto.TodoOutput'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorOutput'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/dto.ErrorOutput'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorOutput'
+      summary: Find all todo
+      tags:
+      - Todo
+  /api/v1/todo/:
+    post:
+      consumes:
+      - application/json
+      description: add by json todo
+      parameters:
+      - description: Create todo
+        in: body
+        name: account
+        required: true
+        schema:
+          $ref: '#/definitions/todoDto.CreateTodoInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/todoDto.CreateTodoOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorOutput'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/dto.ErrorOutput'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorOutput'
+      summary: Create a todo
+      tags:
+      - Todo
+  /api/v1/todo/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete by todo id
+      parameters:
+      - description: Todo Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/todoDto.TodoOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorOutput'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorOutput'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorOutput'
+      summary: Delete a todo
+      tags:
+      - Todo
+    get:
+      consumes:
+      - application/json
+      description: Get todo by id
+      parameters:
+      - description: Todo Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/todoDto.TodoOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorOutput'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorOutput'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorOutput'
+      summary: Find a todo
+      tags:
+      - Todo
+    put:
+      consumes:
+      - application/json
+      description: update by json todo
+      parameters:
+      - description: Todo Id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update todo
+        in: body
+        name: account
+        required: true
+        schema:
+          $ref: '#/definitions/todoDto.UpdateTodoInput'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/todoDto.TodoOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorOutput'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorOutput'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorOutput'
+      summary: Update a todo
+      tags:
+      - Todo
+swagger: "2.0"

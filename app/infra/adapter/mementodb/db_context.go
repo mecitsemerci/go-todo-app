@@ -3,7 +3,7 @@ package mementodb
 import (
 	"github.com/google/uuid"
 	"github.com/mecitsemerci/clean-go-todo-api/app/core/domain/todo"
-	"github.com/mecitsemerci/clean-go-todo-api/app/infra/utils"
+	"github.com/mecitsemerci/clean-go-todo-api/app/infra/utility"
 	"log"
 )
 
@@ -12,7 +12,7 @@ var todoCollection = map[string]todo.Todo{}
 type DbContext struct{}
 
 func (db *DbContext) Seed() {
-	now := utils.UtcNow()
+	now := utility.UtcNow()
 	id1, err := uuid.Parse("2d554d6a-d908-4de8-929e-e9c4d487c6a0")
 	log.Println(err)
 	todoCollection["2d554d6a-d908-4de8-929e-e9c4d487c6a0"] = todo.Todo{
