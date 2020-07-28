@@ -32,23 +32,23 @@ func (adapter *TodoAdapter) Insert(entity todo.Todo) (uuid.UUID, error) {
 	return entity.Id, nil
 }
 
-func (adapter *TodoAdapter) Update(entity todo.Todo) (bool, error) {
+func (adapter *TodoAdapter) Update(entity todo.Todo) error {
 
 	if existingEntity, ok := todoCollection[entity.Id.String()]; ok {
 		updatedEntity := existingEntity
 		updatedEntity.Title = entity.Title
 		updatedEntity.UpdatedAt = utility.UtcNow()
 		todoCollection[entity.Id.String()] = updatedEntity
-		return true, nil
+		return nil
 	}
-	return false, errors.New("Item not found")
+	return errors.New("Item not found")
 }
 
-func (adapter *TodoAdapter) Delete(id uuid.UUID) (bool, error) {
+func (adapter *TodoAdapter) Delete(id uuid.UUID) error {
 
 	if _, ok := todoCollection[id.String()]; ok {
 		delete(todoCollection, id.String())
-		return true, nil
+		return nil
 	}
-	return false, errors.New("Item not found")
+	return errors.New("Item not found")
 }

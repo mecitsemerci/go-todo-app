@@ -1,18 +1,18 @@
 basePath: /
 definitions:
+  dto.ErrorOutput:
+    properties:
+      code:
+        type: integer
+      details:
+        type: object
+      message:
+        type: string
+    type: object
   dto.HealthOutput:
     properties:
       status:
         example: healthy
-        type: string
-    type: object
-  httputil.HTTPError:
-    properties:
-      code:
-        example: 400
-        type: integer
-      message:
-        example: status bad request
         type: string
     type: object
   todoDto.CreateTodoInput:
@@ -30,14 +30,19 @@ definitions:
   todoDto.TodoOutput:
     properties:
       created_at:
+        example: "2020-07-28T07:32:32.71472Z"
         type: string
       id:
+        example: 6ba7b811-9dad-11d1-80b4-00c04fd430c8
         type: string
       is_done:
+        example: false
         type: boolean
       title:
+        example: Shopping
         type: string
       updated_at:
+        example: "2020-07-30T07:32:32.71472Z"
         type: string
     type: object
   todoDto.UpdateTodoInput:
@@ -89,15 +94,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/dto.ErrorOutput'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/dto.ErrorOutput'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/dto.ErrorOutput'
       summary: Find all todo
       tags:
       - Todo
@@ -123,15 +128,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/dto.ErrorOutput'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/dto.ErrorOutput'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/dto.ErrorOutput'
       summary: Create a todo
       tags:
       - Todo
@@ -156,15 +161,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
-        "422":
-          description: Unprocessable Entity
+            $ref: '#/definitions/dto.ErrorOutput'
+        "404":
+          description: Not Found
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/dto.ErrorOutput'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/dto.ErrorOutput'
       summary: Delete a todo
       tags:
       - Todo
@@ -188,15 +193,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
-        "422":
-          description: Unprocessable Entity
+            $ref: '#/definitions/dto.ErrorOutput'
+        "404":
+          description: Not Found
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/dto.ErrorOutput'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/dto.ErrorOutput'
       summary: Find a todo
       tags:
       - Todo
@@ -219,22 +224,22 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "204":
+          description: No Content
           schema:
             $ref: '#/definitions/todoDto.TodoOutput'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
-        "422":
-          description: Unprocessable Entity
+            $ref: '#/definitions/dto.ErrorOutput'
+        "404":
+          description: Not Found
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/dto.ErrorOutput'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/dto.ErrorOutput'
       summary: Update a todo
       tags:
       - Todo

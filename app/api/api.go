@@ -3,10 +3,8 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/mecitsemerci/clean-go-todo-api/app/api/controller"
-	v1 "github.com/mecitsemerci/clean-go-todo-api/app/api/controller/v1"
+	"github.com/mecitsemerci/clean-go-todo-api/app/api/controller/v1"
 )
-
-
 
 func AddControllers(apiRouteGroup *gin.RouterGroup) {
 
