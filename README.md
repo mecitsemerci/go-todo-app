@@ -5,9 +5,9 @@ This repository is a sample go lang web project built according to Clean Archite
 ## Build with
 * Gin Web Framework
 * Docker support
+* Swagger UI support
 * :soon: MongoDb support
 * :soon: Firebase support
-* :soon: Swagger UI support
 
 ### Layers and Dependencies
 
