@@ -48,6 +48,29 @@ var doc = `{
                 }
             }
         },
+        "/api/health/dependencies": {
+            "get": {
+                "description": "Get api healthy status with dependencies",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Health Check"
+                ],
+                "summary": "Check api status",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HealthOutput"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/todo": {
             "get": {
                 "description": "Get all todo array",
@@ -108,7 +131,7 @@ var doc = `{
                 "parameters": [
                     {
                         "description": "Create todo",
-                        "name": "account",
+                        "name": "todo",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -215,7 +238,7 @@ var doc = `{
                     },
                     {
                         "description": "Update todo",
-                        "name": "account",
+                        "name": "todo",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -308,7 +331,10 @@ var doc = `{
                     "type": "integer"
                 },
                 "details": {
-                    "type": "object"
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "message": {
                     "type": "string"
@@ -318,6 +344,12 @@ var doc = `{
         "dto.HealthOutput": {
             "type": "object",
             "properties": {
+                "dependencies": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "boolean"
+                    }
+                },
                 "status": {
                     "type": "string",
                     "example": "healthy"
@@ -327,9 +359,13 @@ var doc = `{
         "todoDto.CreateTodoInput": {
             "type": "object",
             "required": [
+                "description",
                 "title"
             ],
             "properties": {
+                "description": {
+                    "type": "string"
+                },
                 "title": {
                     "type": "string"
                 }
@@ -349,6 +385,10 @@ var doc = `{
                 "created_at": {
                     "type": "string",
                     "example": "2020-07-28T07:32:32.71472Z"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Market shopping"
                 },
                 "id": {
                     "type": "string",
@@ -371,9 +411,13 @@ var doc = `{
         "todoDto.UpdateTodoInput": {
             "type": "object",
             "required": [
+                "description",
                 "title"
             ],
             "properties": {
+                "description": {
+                    "type": "string"
+                },
                 "is_done": {
                     "type": "boolean"
                 },

@@ -5,21 +5,30 @@ definitions:
       code:
         type: integer
       details:
-        type: object
+        items:
+          type: string
+        type: array
       message:
         type: string
     type: object
   dto.HealthOutput:
     properties:
+      dependencies:
+        additionalProperties:
+          type: boolean
+        type: object
       status:
         example: healthy
         type: string
     type: object
   todoDto.CreateTodoInput:
     properties:
+      description:
+        type: string
       title:
         type: string
     required:
+    - description
     - title
     type: object
   todoDto.CreateTodoOutput:
@@ -31,6 +40,9 @@ definitions:
     properties:
       created_at:
         example: "2020-07-28T07:32:32.71472Z"
+        type: string
+      description:
+        example: Market shopping
         type: string
       id:
         example: 6ba7b811-9dad-11d1-80b4-00c04fd430c8
@@ -47,11 +59,14 @@ definitions:
     type: object
   todoDto.UpdateTodoInput:
     properties:
+      description:
+        type: string
       is_done:
         type: boolean
       title:
         type: string
     required:
+    - description
     - title
     type: object
 host: localhost:8080
@@ -67,6 +82,21 @@ paths:
       consumes:
       - application/json
       description: Get api healthy status
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.HealthOutput'
+      summary: Check api status
+      tags:
+      - Health Check
+  /api/health/dependencies:
+    get:
+      consumes:
+      - application/json
+      description: Get api healthy status with dependencies
       produces:
       - application/json
       responses:
@@ -114,7 +144,7 @@ paths:
       parameters:
       - description: Create todo
         in: body
-        name: account
+        name: todo
         required: true
         schema:
           $ref: '#/definitions/todoDto.CreateTodoInput'
@@ -217,7 +247,7 @@ paths:
         type: string
       - description: Update todo
         in: body
-        name: account
+        name: todo
         required: true
         schema:
           $ref: '#/definitions/todoDto.UpdateTodoInput'

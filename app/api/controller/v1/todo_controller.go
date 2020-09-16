@@ -2,17 +2,19 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
-	"github.com/mecitsemerci/clean-go-todo-api/app/api/controller"
-	"github.com/mecitsemerci/clean-go-todo-api/app/api/dto"
 	todoDto "github.com/mecitsemerci/clean-go-todo-api/app/api/dto/todo"
 	"github.com/mecitsemerci/clean-go-todo-api/app/core/services"
+	"github.com/mecitsemerci/clean-go-todo-api/app/infra/utility"
 	"net/http"
 )
 
 type TodoController struct {
-	controller.ApiController
-	TodoService services.TodoService
+	TodoService services.ITodoService
+}
+
+func (controller *TodoController) Init() *TodoController {
+	controller.TodoService = new(services.TodoService).Init()
+	return controller
 }
 
 func (controller *TodoController) RegisterRoutes(apiRouteGroup *gin.RouterGroup) {
@@ -41,13 +43,13 @@ func (controller *TodoController) FindAll(ctx *gin.Context) {
 	todoList, err := controller.TodoService.GetAll()
 
 	if err != nil {
-		dto.NewErrorOutput(ctx, http.StatusUnprocessableEntity, "Something went wrong!", err)
+		utility.NewErrorOutput(ctx, http.StatusUnprocessableEntity, "Something went wrong!", err)
 		return
 	}
 	var result []todoDto.TodoOutput
 	todoOutputDto := todoDto.TodoOutput{}
 	for _, entity := range todoList {
-		result = append(result, todoOutputDto.FromEntity(entity))
+		result = append(result, todoOutputDto.FromEntity(*entity))
 	}
 	ctx.JSON(http.StatusOK, result)
 }
@@ -66,23 +68,23 @@ func (controller *TodoController) FindAll(ctx *gin.Context) {
 // @Router /api/v1/todo/{id} [get]
 func (controller *TodoController) Find(ctx *gin.Context) {
 
-	todoId, err := uuid.Parse(ctx.Param("id"))
+	todoId := ctx.Param("id")
 
-	if err != nil {
-		dto.NewErrorOutput(ctx, http.StatusBadRequest, "Id is invalid.", err)
+	if todoId == "" || todoId == " " {
+		utility.NewErrorOutput(ctx, http.StatusBadRequest, "Id is empty.", nil)
 		return
 	}
 
 	todoEntity, err := controller.TodoService.Find(todoId)
 
 	if err != nil {
-		dto.NewErrorOutput(ctx, http.StatusNotFound, "Item is not exist.", err)
+		utility.NewErrorOutput(ctx, http.StatusNotFound, "Item is not exist.", err)
 		return
 	}
 
 	todoOutput := todoDto.TodoOutput{}
 
-	ctx.JSON(http.StatusOK, todoOutput.FromEntity(todoEntity))
+	ctx.JSON(http.StatusOK, todoOutput.FromEntity(*todoEntity))
 }
 
 // Create Todo godoc
@@ -91,7 +93,7 @@ func (controller *TodoController) Find(ctx *gin.Context) {
 // @Tags Todo
 // @Accept  json
 // @Produce  json
-// @Param account body todoDto.CreateTodoInput true "Create todo"
+// @Param todo body todoDto.CreateTodoInput true "Create todo"
 // @Success 200 {object} todoDto.CreateTodoOutput
 // @Failure 400 {object} dto.ErrorOutput
 // @Failure 422 {object} dto.ErrorOutput
@@ -100,14 +102,14 @@ func (controller *TodoController) Find(ctx *gin.Context) {
 func (controller *TodoController) Create(ctx *gin.Context) {
 	var createTodoInput todoDto.CreateTodoInput
 	if err := ctx.ShouldBindJSON(&createTodoInput); err != nil {
-		dto.NewErrorOutput(ctx, http.StatusBadRequest, "Request model is invalid.", err)
+		utility.NewErrorOutput(ctx, http.StatusBadRequest, "Request model is invalid.", err)
 		return
 	}
 
 	todoId, err := controller.TodoService.Create(createTodoInput.ToEntity())
 
 	if err != nil {
-		dto.NewErrorOutput(ctx, http.StatusUnprocessableEntity, "The item failed to create.", err)
+		utility.NewErrorOutput(ctx, http.StatusUnprocessableEntity, "The item failed to create.", err)
 		return
 	}
 
@@ -124,7 +126,7 @@ func (controller *TodoController) Create(ctx *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param id path string true "Todo Id"
-// @Param account body todoDto.UpdateTodoInput true "Update todo"
+// @Param todo body todoDto.UpdateTodoInput true "Update todo"
 // @Success 204 {object} todoDto.TodoOutput
 // @Failure 400 {object} dto.ErrorOutput
 // @Failure 404 {object} dto.ErrorOutput
@@ -132,21 +134,25 @@ func (controller *TodoController) Create(ctx *gin.Context) {
 // @Router /api/v1/todo/{id} [put]
 func (controller *TodoController) Update(ctx *gin.Context) {
 
-	todoId, err := uuid.Parse(ctx.Param("id"))
-	if err != nil {
-		dto.NewErrorOutput(ctx, http.StatusBadRequest, "Id is invalid.", err)
+	todoId := ctx.Param("id")
+	if todoId == "" || todoId == " " {
+		utility.NewErrorOutput(ctx, http.StatusBadRequest, "Id is empty.", nil)
 		return
 	}
 	var updateTodoInput todoDto.UpdateTodoInput
 	if err := ctx.ShouldBindJSON(&updateTodoInput); err != nil {
-		dto.NewErrorOutput(ctx, http.StatusBadRequest, "Request model is invalid.", err)
+		utility.NewErrorOutput(ctx, http.StatusBadRequest, "Request model is invalid.", err)
 		return
 	}
-
-	err = controller.TodoService.Update(updateTodoInput.ToEntity(todoId))
+	entity, err := updateTodoInput.ToEntity(todoId)
+	if err != nil {
+		utility.NewErrorOutput(ctx, http.StatusBadRequest, "Id is invalid.", err)
+		return
+	}
+	err = controller.TodoService.Update(entity)
 
 	if err != nil {
-		dto.NewErrorOutput(ctx, http.StatusNotFound, "The item failed to update.", err)
+		utility.NewErrorOutput(ctx, http.StatusNotFound, "The item failed to update.", err)
 		return
 	}
 
@@ -168,16 +174,16 @@ func (controller *TodoController) Update(ctx *gin.Context) {
 // @Router /api/v1/todo/{id} [delete]
 func (controller *TodoController) Delete(ctx *gin.Context) {
 
-	todoId, err := uuid.Parse(ctx.Param("id"))
-	if err != nil {
-		dto.NewErrorOutput(ctx, http.StatusBadRequest, "Id is invalid.", err)
+	todoId := ctx.Param("id")
+	if todoId == "" || todoId == " " {
+		utility.NewErrorOutput(ctx, http.StatusBadRequest, "Id is invalid.", nil)
 		return
 	}
 
-	err = controller.TodoService.Delete(todoId)
+	err := controller.TodoService.Delete(todoId)
 
 	if err != nil {
-		dto.NewErrorOutput(ctx, http.StatusNotFound, "The item failed to delete.", err)
+		utility.NewErrorOutput(ctx, http.StatusNotFound, "The item failed to delete.", err)
 		return
 	}
 

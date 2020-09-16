@@ -1,24 +1,29 @@
 package services
 
 import (
-	"github.com/google/uuid"
 	"github.com/mecitsemerci/clean-go-todo-api/app/core/domain/todo"
-	"github.com/mecitsemerci/clean-go-todo-api/app/infra/adapter/mementodb"
+	"github.com/mecitsemerci/clean-go-todo-api/app/infra/adapter/mongodb"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type IService interface {
-	GetAll() ([]todo.Todo, error)
-	Find(todoId int) (todo.Todo, error)
-	Create(todo todo.Todo) (uuid.UUID, error)
-	Update(todo todo.Todo) (bool, error)
-	Delete(todoId int) (bool, error)
+type ITodoService interface {
+	GetAll() ([]*todo.Todo, error)
+	Find(todoId string) (*todo.Todo, error)
+	Create(todo todo.Todo) (string, error)
+	Update(todo todo.Todo) error
+	Delete(todoId string) error
 }
 type TodoService struct {
 	BaseService
-	todoRepository mementodb.TodoAdapter
+	todoRepository *mongodb.TodoAdapter
 }
 
-func (service *TodoService) GetAll() ([]todo.Todo, error) {
+func (service *TodoService) Init() *TodoService {
+	service.todoRepository = new(mongodb.TodoAdapter).Init()
+	return service
+}
+
+func (service *TodoService) GetAll() ([]*todo.Todo, error) {
 	items, err := service.todoRepository.GetAll()
 	if err != nil {
 		return nil, err
@@ -26,20 +31,24 @@ func (service *TodoService) GetAll() ([]todo.Todo, error) {
 	return items, nil
 }
 
-func (service *TodoService) Find(todoId uuid.UUID) (todo.Todo, error) {
-	entity, err := service.todoRepository.GetById(todoId)
+func (service *TodoService) Find(todoId string) (*todo.Todo, error) {
+	oid, err := primitive.ObjectIDFromHex(todoId)
 	if err != nil {
-		return todo.Todo{}, err
+		return nil, err
+	}
+	entity, err := service.todoRepository.GetById(oid)
+	if err != nil {
+		return nil, err
 	}
 	return entity, nil
 }
 
-func (service *TodoService) Create(todo todo.Todo) (uuid.UUID, error) {
-	entityId, err := service.todoRepository.Insert(todo)
+func (service *TodoService) Create(todo todo.Todo) (string, error) {
+	oid, err := service.todoRepository.Insert(todo)
 	if err != nil {
-		return uuid.UUID{}, err
+		return "", err
 	}
-	return entityId, nil
+	return oid.Hex(), nil
 }
 
 func (service *TodoService) Update(todo todo.Todo) error {
@@ -47,7 +56,16 @@ func (service *TodoService) Update(todo todo.Todo) error {
 	return err
 }
 
-func (service *TodoService) Delete(todoId uuid.UUID) error {
-	err := service.todoRepository.Delete(todoId)
-	return err
+func (service *TodoService) Delete(todoId string) error {
+
+	oid, err := primitive.ObjectIDFromHex(todoId)
+	if err != nil {
+		return err
+	}
+
+	err = service.todoRepository.Delete(oid)
+	if err != nil {
+		return err
+	}
+	return nil
 }
