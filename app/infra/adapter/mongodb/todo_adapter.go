@@ -20,12 +20,15 @@ func (adapter *TodoAdapter) Init() *TodoAdapter {
 }
 
 func (adapter *TodoAdapter) GetById(id primitive.ObjectID) (*todo.Todo, error) {
-	//Connect
-	adapter.DBContext.Connect()
 	var item todo.Todo
+
+	//Filter
 	filter := bson.M{"_id": bson.M{"$eq": id}}
 
-	//Delete Item
+	//Connect
+	adapter.DBContext.Connect()
+
+	//Find Item by Id
 	err := adapter.DBContext.TodoCollection.FindOne(adapter.DBContext.Context, filter).Decode(&item)
 
 	//Disconnect
@@ -40,11 +43,13 @@ func (adapter *TodoAdapter) GetById(id primitive.ObjectID) (*todo.Todo, error) {
 
 func (adapter *TodoAdapter) GetAll() ([]*todo.Todo, error) {
 	var todos []*todo.Todo
-	//Connect
-	adapter.DBContext.Connect()
+
+	//Configure Find Query
 	findOptions := options.Find()
 
-	//Insert Item
+	//Connect
+	adapter.DBContext.Connect()
+
 	cur, err := adapter.DBContext.TodoCollection.Find(adapter.DBContext.Context, bson.D{}, findOptions)
 
 	if err != nil {
@@ -55,13 +60,13 @@ func (adapter *TodoAdapter) GetAll() ([]*todo.Todo, error) {
 		var item todo.Todo
 		err := cur.Decode(&item)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err.Error())
 		}
 		todos = append(todos, &item)
 	}
 
 	if err := cur.Err(); err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	_ = cur.Close(adapter.DBContext.Context)
@@ -73,7 +78,7 @@ func (adapter *TodoAdapter) GetAll() ([]*todo.Todo, error) {
 }
 
 func (adapter *TodoAdapter) Insert(entity todo.Todo) (primitive.ObjectID, error) {
-
+	// Set Fields
 	entity.Id = primitive.NewObjectIDFromTimestamp(utility.UtcNow())
 	entity.CreatedAt = utility.UtcNow()
 	entity.UpdatedAt = utility.UtcNow()
@@ -96,16 +101,19 @@ func (adapter *TodoAdapter) Insert(entity todo.Todo) (primitive.ObjectID, error)
 }
 
 func (adapter *TodoAdapter) Update(entity todo.Todo) error {
-	//Connect
-	adapter.DBContext.Connect()
-
+	//Filter
 	filter := bson.M{"_id": bson.M{"$eq": entity.Id}}
+
+	//Update fields
 	update := bson.M{"$set": bson.M{
 		"title":       entity.Title,
 		"description": entity.Description,
 		"is_done":     entity.IsDone,
 		"updated_at":  utility.UtcNow(),
 	}}
+
+	//Connect
+	adapter.DBContext.Connect()
 
 	//Update Item
 	result, err := adapter.DBContext.TodoCollection.UpdateOne(adapter.DBContext.Context, filter, update)
@@ -124,10 +132,11 @@ func (adapter *TodoAdapter) Update(entity todo.Todo) error {
 }
 
 func (adapter *TodoAdapter) Delete(id primitive.ObjectID) error {
+	//Filter
+	filter := bson.M{"_id": bson.M{"$eq": id}}
+
 	//Connect
 	adapter.DBContext.Connect()
-
-	filter := bson.M{"_id": bson.M{"$eq": id}}
 
 	//Delete Item
 	result, err := adapter.DBContext.TodoCollection.DeleteOne(adapter.DBContext.Context, filter)
