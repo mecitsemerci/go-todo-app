@@ -5,11 +5,13 @@ import (
 )
 
 type CreateTodoInput struct {
-	Title  *string `json:"title" binding:"required"`
+	Title       *string `json:"title" binding:"required"`
+	Description *string `json:"description" binding:"required"`
 }
 
 func (dto *CreateTodoInput) ToEntity() todo.Todo {
 	return todo.Todo{
-		Title: *dto.Title,
+		Title:       *dto.Title,
+		Description: *dto.Description,
 	}
 }

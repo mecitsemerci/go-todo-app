@@ -1,4 +1,4 @@
-# Clean Todo Rest Api with Gin Web Framework
+# Clean Architecture Todo REST API with Go
 
 This repository is a sample go lang web project built according to Clean Architecture.  
 
@@ -6,7 +6,7 @@ This repository is a sample go lang web project built according to Clean Archite
 * Gin Web Framework
 * Docker support
 * Swagger UI support
-* :soon: MongoDb support
+* MongoDb support
 * :soon: Firebase support
 
 ### Layers and Dependencies

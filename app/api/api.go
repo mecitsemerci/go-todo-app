@@ -10,8 +10,8 @@ func AddControllers(apiRouteGroup *gin.RouterGroup) {
 
 	groupV1 := apiRouteGroup.Group("/v1")
 	{
-		new(v1.TodoController).RegisterRoutes(groupV1)
+		new(v1.TodoController).Init().RegisterRoutes(groupV1)
 	}
 
-	new(controller.HealthController).RegisterRoutes(apiRouteGroup)
+	new(controller.HealthController).Init().RegisterRoutes(apiRouteGroup)
 }
