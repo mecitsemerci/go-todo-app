@@ -1,11 +1,9 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/mecitsemerci/clean-go-todo-api/app/api/dto"
 	"github.com/mecitsemerci/clean-go-todo-api/app/infra/adapter/mongodb"
-	"log"
 	"net/http"
 )
 
@@ -52,13 +50,11 @@ func (controller *HealthController) HealthyDependencies(ctx *gin.Context) {
 	mongo := map[string]bool{
 		"mongodb": true,
 	}
-	log.Println("############# HealthyDependencies #############")
 	var output = dto.HealthOutput{Status: "healthy", Dependencies: &mongo}
 	if err != nil {
 		output.Status = "unhealthy"
 		mongo["mongodb"] = false
 		output.Dependencies = &mongo
-		fmt.Println(err.Error())
 		ctx.JSON(http.StatusServiceUnavailable, output)
 		return
 	}
