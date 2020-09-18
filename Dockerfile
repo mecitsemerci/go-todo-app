@@ -23,6 +23,13 @@ COPY . .
 # Build the Go app
 RUN go build -o main .
 
+# Generate Swagger document
+RUN go get github.com/swaggo/swag/cmd/swag && swag init
+
+# Run Wire Go
+RUN go get github.com/google/wire/cmd/wire && \
+    $GOPATH/bin/wire ./app/infra/wired/wired.go
+    
 # Expose port 8080 to the outside world
 EXPOSE 8080
 
