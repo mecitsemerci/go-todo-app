@@ -16,6 +16,11 @@ type DbContext struct {
 	TodoCollection *mongo.Collection
 }
 
+func NewDbContext() DbContext {
+	dbContext := new(DbContext)
+	return *dbContext
+}
+
 func (dbContext *DbContext) init(timeout time.Duration) *DbContext {
 	ctx, _ := context.WithTimeout(context.Background(), timeout)
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(config.MongoDbUrl))
@@ -29,15 +34,15 @@ func (dbContext *DbContext) init(timeout time.Duration) *DbContext {
 	dbContext.TodoCollection = database.Collection("Todo")
 	return dbContext
 }
+
 func (dbContext *DbContext) Connect() {
-	dbContext.init(15*time.Second)
+	dbContext.init(15 * time.Second)
 }
 
 func (dbContext *DbContext) ConnectWithTimeout(timeout time.Duration) {
 	dbContext.init(timeout)
 }
 
-func (dbContext *DbContext) Disconnect()  {
+func (dbContext *DbContext) Disconnect() {
 	dbContext.Client.Disconnect(dbContext.Context)
 }
-

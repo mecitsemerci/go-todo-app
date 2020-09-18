@@ -12,9 +12,8 @@ type TodoController struct {
 	TodoService services.ITodoService
 }
 
-func (controller *TodoController) Init() *TodoController {
-	controller.TodoService = new(services.TodoService).Init()
-	return controller
+func NewTodoController(todoService services.ITodoService) TodoController {
+	return TodoController{TodoService: todoService}
 }
 
 func (controller *TodoController) RegisterRoutes(apiRouteGroup *gin.RouterGroup) {

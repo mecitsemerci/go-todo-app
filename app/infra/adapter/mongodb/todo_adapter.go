@@ -11,34 +11,11 @@ import (
 )
 
 type TodoAdapter struct {
-	DBContext *DbContext
+	DbCtx DbContext
 }
 
-func (adapter *TodoAdapter) Init() *TodoAdapter {
-	adapter.DBContext = new(DbContext)
-	return adapter
-}
-
-func (adapter *TodoAdapter) GetById(id primitive.ObjectID) (*todo.Todo, error) {
-	var item todo.Todo
-
-	//Filter
-	filter := bson.M{"_id": bson.M{"$eq": id}}
-
-	//Connect
-	adapter.DBContext.Connect()
-
-	//Find Item by Id
-	err := adapter.DBContext.TodoCollection.FindOne(adapter.DBContext.Context, filter).Decode(&item)
-
-	//Disconnect
-	defer adapter.DBContext.Disconnect()
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &item, nil
+func NewTodoAdapter(dbContext DbContext) *TodoAdapter {
+	return &TodoAdapter{DbCtx: dbContext}
 }
 
 func (adapter *TodoAdapter) GetAll() ([]*todo.Todo, error) {
@@ -48,15 +25,15 @@ func (adapter *TodoAdapter) GetAll() ([]*todo.Todo, error) {
 	findOptions := options.Find()
 
 	//Connect
-	adapter.DBContext.Connect()
+	adapter.DbCtx.Connect()
 
-	cur, err := adapter.DBContext.TodoCollection.Find(adapter.DBContext.Context, bson.D{}, findOptions)
+	cur, err := adapter.DbCtx.TodoCollection.Find(adapter.DbCtx.Context, bson.D{}, findOptions)
 
 	if err != nil {
 		return nil, err
 	}
 
-	for cur.Next(adapter.DBContext.Context) {
+	for cur.Next(adapter.DbCtx.Context) {
 		var item todo.Todo
 		err := cur.Decode(&item)
 		if err != nil {
@@ -69,57 +46,84 @@ func (adapter *TodoAdapter) GetAll() ([]*todo.Todo, error) {
 		return nil, err
 	}
 
-	_ = cur.Close(adapter.DBContext.Context)
+	_ = cur.Close(adapter.DbCtx.Context)
 
 	//Disconnect
-	defer adapter.DBContext.Disconnect()
+	defer adapter.DbCtx.Disconnect()
 
 	return todos, nil
 }
 
-func (adapter *TodoAdapter) Insert(entity todo.Todo) (primitive.ObjectID, error) {
-	// Set Fields
-	entity.Id = primitive.NewObjectIDFromTimestamp(utility.UtcNow())
-	entity.CreatedAt = utility.UtcNow()
-	entity.UpdatedAt = utility.UtcNow()
-
-	//Connect
-	adapter.DBContext.Connect()
-
-	//Insert Item
-	result, err := adapter.DBContext.TodoCollection.InsertOne(adapter.DBContext.Context, entity)
-
-	//Disconnect
-	defer adapter.DBContext.Disconnect()
+func (adapter *TodoAdapter) GetById(id string) (*todo.Todo, error) {
+	var item todo.Todo
+	// ObjectId
+	oid, err := primitive.ObjectIDFromHex(id)
 
 	if err != nil {
-		return primitive.NilObjectID, err
+		return nil, err
+	}
+	//Filter
+	filter := bson.M{"_id": bson.M{"$eq": oid}}
+
+	//Connect
+	adapter.DbCtx.Connect()
+
+	//Find Item by Id
+	err = adapter.DbCtx.TodoCollection.FindOne(adapter.DbCtx.Context, filter).Decode(&item)
+
+	//Disconnect
+	defer adapter.DbCtx.Disconnect()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &item, nil
+}
+
+func (adapter *TodoAdapter) Insert(todo todo.Todo) (string, error) {
+	// Set Fields
+	todo.Id = primitive.NewObjectIDFromTimestamp(utility.UtcNow())
+	todo.CreatedAt = utility.UtcNow()
+	todo.UpdatedAt = utility.UtcNow()
+
+	//Connect
+	adapter.DbCtx.Connect()
+
+	//Insert Item
+	result, err := adapter.DbCtx.TodoCollection.InsertOne(adapter.DbCtx.Context, todo)
+
+	//Disconnect
+	defer adapter.DbCtx.Disconnect()
+
+	if err != nil {
+		return primitive.NilObjectID.Hex(), err
 	}
 
 	// Return inserted item id
-	return result.InsertedID.(primitive.ObjectID), nil
+	return result.InsertedID.(primitive.ObjectID).Hex(), nil
 }
 
-func (adapter *TodoAdapter) Update(entity todo.Todo) error {
+func (adapter *TodoAdapter) Update(todo todo.Todo) error {
 	//Filter
-	filter := bson.M{"_id": bson.M{"$eq": entity.Id}}
+	filter := bson.M{"_id": bson.M{"$eq": todo.Id}}
 
 	//Update fields
 	update := bson.M{"$set": bson.M{
-		"title":       entity.Title,
-		"description": entity.Description,
-		"is_done":     entity.IsDone,
+		"title":       todo.Title,
+		"description": todo.Description,
+		"is_done":     todo.IsDone,
 		"updated_at":  utility.UtcNow(),
 	}}
 
 	//Connect
-	adapter.DBContext.Connect()
+	adapter.DbCtx.Connect()
 
 	//Update Item
-	result, err := adapter.DBContext.TodoCollection.UpdateOne(adapter.DBContext.Context, filter, update)
+	result, err := adapter.DbCtx.TodoCollection.UpdateOne(adapter.DbCtx.Context, filter, update)
 
 	//Disconnect
-	defer adapter.DBContext.Disconnect()
+	defer adapter.DbCtx.Disconnect()
 
 	if err != nil {
 		return err
@@ -131,18 +135,22 @@ func (adapter *TodoAdapter) Update(entity todo.Todo) error {
 	return errors.New("no items have been updated")
 }
 
-func (adapter *TodoAdapter) Delete(id primitive.ObjectID) error {
+func (adapter *TodoAdapter) Delete(id string) error {
+	oid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
 	//Filter
-	filter := bson.M{"_id": bson.M{"$eq": id}}
+	filter := bson.M{"_id": bson.M{"$eq": oid}}
 
 	//Connect
-	adapter.DBContext.Connect()
+	adapter.DbCtx.Connect()
 
 	//Delete Item
-	result, err := adapter.DBContext.TodoCollection.DeleteOne(adapter.DBContext.Context, filter)
+	result, err := adapter.DbCtx.TodoCollection.DeleteOne(adapter.DbCtx.Context, filter)
 
 	//Disconnect
-	defer adapter.DBContext.Disconnect()
+	defer adapter.DbCtx.Disconnect()
 
 	if err != nil {
 		return err

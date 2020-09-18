@@ -2,8 +2,6 @@ package services
 
 import (
 	"github.com/mecitsemerci/clean-go-todo-api/app/core/domain/todo"
-	"github.com/mecitsemerci/clean-go-todo-api/app/infra/adapter/mongodb"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ITodoService interface {
@@ -14,17 +12,15 @@ type ITodoService interface {
 	Delete(todoId string) error
 }
 type TodoService struct {
-	BaseService
-	todoRepository *mongodb.TodoAdapter
+	TodoRepository todo.ITodoRepository
 }
 
-func (service *TodoService) Init() *TodoService {
-	service.todoRepository = new(mongodb.TodoAdapter).Init()
-	return service
+func NewTodoService(todoRepository todo.ITodoRepository) *TodoService {
+	return &TodoService{TodoRepository: todoRepository}
 }
 
 func (service *TodoService) GetAll() ([]*todo.Todo, error) {
-	items, err := service.todoRepository.GetAll()
+	items, err := service.TodoRepository.GetAll()
 	if err != nil {
 		return nil, err
 	}
@@ -32,11 +28,7 @@ func (service *TodoService) GetAll() ([]*todo.Todo, error) {
 }
 
 func (service *TodoService) Find(todoId string) (*todo.Todo, error) {
-	oid, err := primitive.ObjectIDFromHex(todoId)
-	if err != nil {
-		return nil, err
-	}
-	entity, err := service.todoRepository.GetById(oid)
+	entity, err := service.TodoRepository.GetById(todoId)
 	if err != nil {
 		return nil, err
 	}
@@ -44,27 +36,20 @@ func (service *TodoService) Find(todoId string) (*todo.Todo, error) {
 }
 
 func (service *TodoService) Create(todo todo.Todo) (string, error) {
-	oid, err := service.todoRepository.Insert(todo)
+	id, err := service.TodoRepository.Insert(todo)
 	if err != nil {
 		return "", err
 	}
-	return oid.Hex(), nil
+	return id, nil
 }
 
 func (service *TodoService) Update(todo todo.Todo) error {
-	err := service.todoRepository.Update(todo)
+	err := service.TodoRepository.Update(todo)
 	return err
 }
 
 func (service *TodoService) Delete(todoId string) error {
-
-	oid, err := primitive.ObjectIDFromHex(todoId)
-	if err != nil {
-		return err
-	}
-
-	err = service.todoRepository.Delete(oid)
-	if err != nil {
+	if err := service.TodoRepository.Delete(todoId); err != nil {
 		return err
 	}
 	return nil
