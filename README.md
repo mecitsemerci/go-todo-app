@@ -42,3 +42,17 @@ Check the app is running on http://localhost:8080/swagger/index.html
  
  ![image](./docs/img/Swagger_UI.png)
  
+### Wire 
+
+If you want to change something on controller, service or repository, don't forget generate wire_gen.go
+
+Run command on your terminal
+
+```
+bash wire.sh
+```
+
+Check `wire_gen.go` file under `app/infra/wired`directory for differences. Don't change `wire_gen.go` file manually. If you want to learn wire usage check this repo. `
+
+https://github.com/google/wire
+ 
