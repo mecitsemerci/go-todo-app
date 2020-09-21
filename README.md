@@ -7,7 +7,7 @@ This repository is a sample go lang web project built according to Clean Archite
 * Docker support
 * Swagger UI support
 * MongoDb support
-* :soon: Firebase support
+* Wire (Dependency Injection) support 
 
 ### Layers and Dependencies
 
@@ -52,7 +52,7 @@ Run command on your terminal
 bash wire.sh
 ```
 
-Check `wire_gen.go` file under `app/infra/wired`directory for differences. Don't change `wire_gen.go` file manually. If you want to learn wire usage check this repo. `
+Check `wire_gen.go` file under `app/infra/wired`directory for differences. Don't change `wire_gen.go` file manually. If you want to learn wire usage check this repo.
 
 https://github.com/google/wire
  
