@@ -2,9 +2,11 @@ package mongodb
 
 import (
 	"errors"
+	"github.com/mecitsemerci/clean-go-todo-api/app/core/domain"
 	"github.com/mecitsemerci/clean-go-todo-api/app/core/domain/todo"
-	"github.com/mecitsemerci/clean-go-todo-api/app/infra/constants"
-	"github.com/mecitsemerci/clean-go-todo-api/app/infra/utils"
+	"github.com/mecitsemerci/clean-go-todo-api/app/infra/adapter/mongodb/entities"
+	"github.com/mecitsemerci/clean-go-todo-api/app/infra/datetime"
+	"github.com/mecitsemerci/clean-go-todo-api/app/infra/idgenerator"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -35,12 +37,12 @@ func (adapter *TodoAdapter) GetAll() ([]*todo.Todo, error) {
 	}
 
 	for cur.Next(adapter.DbCtx.Context) {
-		var item todo.Todo
-		err := cur.Decode(&item)
+		var entity entities.Todo
+		err := cur.Decode(&entity)
 		if err != nil {
 			log.Println(err.Error())
 		}
-		todos = append(todos, &item)
+		todos = append(todos, entity.ToModel())
 	}
 
 	if err := cur.Err(); err != nil {
@@ -55,10 +57,10 @@ func (adapter *TodoAdapter) GetAll() ([]*todo.Todo, error) {
 	return todos, nil
 }
 
-func (adapter *TodoAdapter) GetById(id string) (*todo.Todo, error) {
-	var item todo.Todo
+func (adapter *TodoAdapter) GetById(id domain.ID) (*todo.Todo, error) {
+	var entity entities.Todo
 
-	oid, err := utils.OIDFromStr(id)
+	oid, err := idgenerator.ObjectIDFromID(id)
 
 	if err != nil {
 		return nil, err
@@ -71,7 +73,7 @@ func (adapter *TodoAdapter) GetById(id string) (*todo.Todo, error) {
 	adapter.DbCtx.Connect()
 
 	//Find Item by Id
-	err = adapter.DbCtx.TodoCollection.FindOne(adapter.DbCtx.Context, filter).Decode(&item)
+	err = adapter.DbCtx.TodoCollection.FindOne(adapter.DbCtx.Context, filter).Decode(&entity)
 
 	//Disconnect
 	defer adapter.DbCtx.Disconnect()
@@ -80,15 +82,16 @@ func (adapter *TodoAdapter) GetById(id string) (*todo.Todo, error) {
 		return nil, err
 	}
 
-	return &item, nil
+	return entity.ToModel(), nil
 }
 
-func (adapter *TodoAdapter) Insert(todo todo.Todo) (string, error) {
+func (adapter *TodoAdapter) Insert(todo todo.Todo) (domain.ID, error) {
 	// Set Fields
-	todo.Id = utils.NewOID()
-	todo.CreatedAt = utils.UtcNow()
-	todo.UpdatedAt = utils.UtcNow()
-	todo.Completed = false
+	var entity entities.Todo
+	err := entity.FromModel(&todo)
+	if err != nil {
+		return domain.NilID, err
+	}
 	//Connect
 	adapter.DbCtx.Connect()
 
@@ -99,23 +102,29 @@ func (adapter *TodoAdapter) Insert(todo todo.Todo) (string, error) {
 	defer adapter.DbCtx.Disconnect()
 
 	if err != nil {
-		return constants.EmptyString, err
+		return domain.NilID, err
 	}
 
 	// Return inserted item id
-	return result.InsertedID.(primitive.ObjectID).Hex(), nil
+	return idgenerator.IDFromObjectID(result.InsertedID.(primitive.ObjectID)), nil
 }
 
 func (adapter *TodoAdapter) Update(todo todo.Todo) error {
+	oid, err := idgenerator.ObjectIDFromID(todo.Id)
+
+	if err != nil {
+		return err
+	}
+
 	//Filter
-	filter := bson.M{"_id": bson.M{"$eq": todo.Id}}
+	filter := bson.M{"_id": bson.M{"$eq": oid}}
 
 	//Update fields
 	update := bson.M{"$set": bson.M{
 		"title":       todo.Title,
 		"description": todo.Description,
 		"completed":   todo.Completed,
-		"updated_at":  utils.UtcNow(),
+		"updated_at":  datetime.Now(),
 	}}
 
 	//Connect
@@ -137,8 +146,8 @@ func (adapter *TodoAdapter) Update(todo todo.Todo) error {
 	return errors.New("no items have been updated")
 }
 
-func (adapter *TodoAdapter) Delete(id string) error {
-	oid, err := utils.OIDFromStr(id)
+func (adapter *TodoAdapter) Delete(id domain.ID) error {
+	oid, err := idgenerator.ObjectIDFromID(id)
 
 	if err != nil {
 		return err

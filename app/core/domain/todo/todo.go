@@ -1,19 +1,15 @@
 package todo
 
 import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"github.com/mecitsemerci/clean-go-todo-api/app/core/domain"
 	"time"
 )
 
 type Todo struct {
-	Id          primitive.ObjectID `bson:"_id,omitempty"`
-	Title       string             `bson:"title,omitempty"`
-	Description string             `bson:"description"`
-	Completed   bool               `bson:"completed"`
-	CreatedAt   time.Time          `bson:"created_at,omitempty"`
-	UpdatedAt   time.Time          `bson:"updated_at,omitempty"`
-}
-
-func (t *Todo) ID() string {
-	return t.Id.Hex()
+	Id          domain.ID
+	Title       string
+	Description string
+	Completed   bool
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
