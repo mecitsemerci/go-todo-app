@@ -3,9 +3,10 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/mecitsemerci/clean-go-todo-api/app/api/dto"
+	"github.com/mecitsemerci/clean-go-todo-api/app/core/domain"
 	"github.com/mecitsemerci/clean-go-todo-api/app/core/services"
+	"github.com/mecitsemerci/clean-go-todo-api/app/infra/check"
 	"github.com/mecitsemerci/clean-go-todo-api/app/infra/httperrors"
-	"github.com/mecitsemerci/clean-go-todo-api/app/infra/utils"
 	"github.com/mecitsemerci/clean-go-todo-api/app/infra/validator"
 	"net/http"
 )
@@ -49,8 +50,8 @@ func (controller *TodoController) GetAll(ctx *gin.Context) {
 	}
 	var result []dto.TodoOutput
 	todoOutputDto := dto.TodoOutput{}
-	for _, entity := range todoList {
-		result = append(result, todoOutputDto.FromEntity(*entity))
+	for _, model := range todoList {
+		result = append(result, todoOutputDto.FromModel(*model))
 	}
 	ctx.JSON(http.StatusOK, result)
 }
@@ -69,14 +70,14 @@ func (controller *TodoController) GetAll(ctx *gin.Context) {
 // @Router /api/v1/todo/{id} [get]
 func (controller *TodoController) Find(ctx *gin.Context) {
 
-	todoId := ctx.Query("id")
+	todoId := ctx.Param("id")
 
-	if utils.IsEmptyOrWhiteSpace(todoId) {
+	if check.IsEmptyOrWhiteSpace(todoId) {
 		httperrors.NewError(ctx, http.StatusBadRequest, "Id is empty.", nil)
 		return
 	}
 
-	todoEntity, err := controller.TodoService.Find(todoId)
+	todoModel, err := controller.TodoService.Find(domain.ID(todoId))
 
 	if err != nil {
 		httperrors.NewError(ctx, http.StatusUnprocessableEntity, "Item is not exist.", err)
@@ -85,7 +86,7 @@ func (controller *TodoController) Find(ctx *gin.Context) {
 
 	todoOutput := dto.TodoOutput{}
 
-	ctx.JSON(http.StatusOK, todoOutput.FromEntity(*todoEntity))
+	ctx.JSON(http.StatusOK, todoOutput.FromModel(*todoModel))
 }
 
 // Create Todo godoc
@@ -112,7 +113,7 @@ func (controller *TodoController) Create(ctx *gin.Context) {
 		return
 	}
 
-	todoId, err := controller.TodoService.Create(createTodoInput.ToEntity())
+	todoId, err := controller.TodoService.Create(createTodoInput.ToModel())
 
 	if err != nil {
 		httperrors.NewError(ctx, http.StatusUnprocessableEntity, "The item failed to create.", err)
@@ -120,7 +121,7 @@ func (controller *TodoController) Create(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, dto.CreateTodoOutput{
-		TodoId: todoId,
+		TodoId: todoId.String(),
 	})
 
 }
@@ -141,7 +142,7 @@ func (controller *TodoController) Create(ctx *gin.Context) {
 func (controller *TodoController) Update(ctx *gin.Context) {
 
 	todoId := ctx.Param("id")
-	if utils.IsEmptyOrWhiteSpace(todoId) {
+	if check.IsEmptyOrWhiteSpace(todoId) {
 		httperrors.NewError(ctx, http.StatusBadRequest, "Id is invalid.", nil)
 		return
 	}
@@ -157,13 +158,13 @@ func (controller *TodoController) Update(ctx *gin.Context) {
 		return
 	}
 
-	entity, err := updateTodoInput.ToEntity(todoId)
+	model, err := updateTodoInput.ToModel(todoId)
 
 	if err != nil {
 		httperrors.NewError(ctx, http.StatusBadRequest, "Id is invalid.", err)
 		return
 	}
-	err = controller.TodoService.Update(*entity)
+	err = controller.TodoService.Update(*model)
 
 	if err != nil {
 		httperrors.NewError(ctx, http.StatusNotFound, "The item failed to update.", err)
@@ -189,12 +190,12 @@ func (controller *TodoController) Update(ctx *gin.Context) {
 func (controller *TodoController) Delete(ctx *gin.Context) {
 
 	todoId := ctx.Param("id")
-	if utils.IsEmptyOrWhiteSpace(todoId) {
+	if check.IsEmptyOrWhiteSpace(todoId) {
 		httperrors.NewError(ctx, http.StatusBadRequest, "Id is empty.", nil)
 		return
 	}
 
-	err := controller.TodoService.Delete(todoId)
+	err := controller.TodoService.Delete(domain.ID(todoId))
 
 	if err != nil {
 		httperrors.NewError(ctx, http.StatusNotFound, "The item failed to delete.", err)

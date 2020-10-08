@@ -1,8 +1,8 @@
 package dto
 
 import (
+	"github.com/mecitsemerci/clean-go-todo-api/app/core/domain"
 	"github.com/mecitsemerci/clean-go-todo-api/app/core/domain/todo"
-	"github.com/mecitsemerci/clean-go-todo-api/app/infra/utils"
 	"time"
 )
 
@@ -15,9 +15,9 @@ type TodoOutput struct {
 	UpdatedAt   time.Time `json:"updated_at" example:"2020-07-30T07:32:32.71472Z"`
 }
 
-func (dto *TodoOutput) FromEntity(todo todo.Todo) TodoOutput {
+func (dto *TodoOutput) FromModel(todo todo.Todo) TodoOutput {
 	return TodoOutput{
-		Id:          todo.Id.Hex(),
+		Id:          todo.Id.String(),
 		Title:       todo.Title,
 		Description: todo.Description,
 		Completed:   todo.Completed,
@@ -32,7 +32,7 @@ type CreateTodoInput struct {
 	Description *string `json:"description" binding:"required"`
 }
 
-func (dto *CreateTodoInput) ToEntity() todo.Todo {
+func (dto *CreateTodoInput) ToModel() todo.Todo {
 	return todo.Todo{
 		Title:       *dto.Title,
 		Description: *dto.Description,
@@ -42,6 +42,7 @@ func (dto *CreateTodoInput) ToEntity() todo.Todo {
 type CreateTodoOutput struct {
 	TodoId string `json:"todo_id"`
 }
+
 //endregion
 
 //region UPDATE
@@ -51,17 +52,14 @@ type UpdateTodoInput struct {
 	Completed   *bool   `json:"completed,omitempty"`
 }
 
-func (dto *UpdateTodoInput) ToEntity(id string) (*todo.Todo, error) {
-	oid, err := utils.OIDFromStr(id)
-	if err != nil {
-		return nil, err
-	}
+func (dto *UpdateTodoInput) ToModel(id string) (*todo.Todo, error) {
 	return &todo.Todo{
-		Id:          oid,
+		Id:          domain.ID(id),
 		Title:       *dto.Title,
 		Description: *dto.Description,
 		Completed:   *dto.Completed,
 	}, nil
 
 }
+
 //endregion
