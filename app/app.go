@@ -7,10 +7,9 @@ import (
 	_ "github.com/mecitsemerci/clean-go-todo-api/docs"
 	swaggerFiles "github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
-	"log"
 )
 
-func Init() {
+func Init() *gin.Engine {
 	router := gin.Default()
 	apiRouteGroup := router.Group("/api")
 
@@ -27,9 +26,5 @@ func Init() {
 	//Swagger Configuration
 	router.GET("/swagger/*any", ginSwagger.DisablingWrapHandler(swaggerFiles.Handler, ""))
 
-	// Run app
-	if err := router.Run(":8080"); err != nil {
-		log.Println(err)
-		return
-	}
+	return router
 }

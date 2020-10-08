@@ -14,7 +14,12 @@ var todoServiceSet = wire.NewSet(core.ProvideTodoService, adapter.ProvideTodoRep
 
 func InitializeTodoControllerV1() v1.TodoController {
 
-	wire.Build(controller.ProvideController, todoServiceSet)
+	wire.Build(controller.ProvideTodoController, todoServiceSet)
 
 	return v1.TodoController{}
+}
+
+func InitializeHealthController() controller.HealthController {
+	wire.Bind(controller.ProvideHealthController, adapter.ProvideDbContext)
+	return controller.HealthController{}
 }

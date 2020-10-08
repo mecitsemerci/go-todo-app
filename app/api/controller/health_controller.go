@@ -5,15 +5,18 @@ import (
 	"github.com/mecitsemerci/clean-go-todo-api/app/api/dto"
 	"github.com/mecitsemerci/clean-go-todo-api/app/infra/adapter/mongodb"
 	"net/http"
+	"time"
 )
 
-type HealthController struct{}
-
-func (controller *HealthController) Init() *HealthController {
-	return controller
+type HealthController struct {
+	DbContext mongodb.DbContext
 }
 
-func (controller *HealthController) RegisterRoutes(apiRouteGroup *gin.RouterGroup) {
+func NewHealthController(dbContext mongodb.DbContext) HealthController {
+	return HealthController{DbContext: dbContext}
+}
+
+func (controller *HealthController) Register(apiRouteGroup *gin.RouterGroup) {
 	router := apiRouteGroup.Group("/health")
 	router.GET("/", controller.Healthy)
 	router.GET("/dependencies", controller.HealthyDependencies)
@@ -43,14 +46,17 @@ func (controller *HealthController) Healthy(ctx *gin.Context) {
 // @Success 200 {object} dto.HealthOutput
 // @Router /api/health/dependencies [get]
 func (controller *HealthController) HealthyDependencies(ctx *gin.Context) {
-	db := new(mongodb.DbContext)
-	db.Connect()
-	err := db.Client.Ping(db.Context, nil)
-	defer db.Disconnect()
-	mongo := map[string]bool{
-		"mongodb": true,
-	}
+
+	controller.DbContext.ConnectWithTimeout(1 * time.Second)
+
+	err := controller.DbContext.Client.Ping(controller.DbContext.Context, nil)
+
+	defer controller.DbContext.Disconnect()
+
+	mongo := map[string]bool{"mongodb": true}
+
 	var output = dto.HealthOutput{Status: "healthy", Dependencies: &mongo}
+
 	if err != nil {
 		output.Status = "unhealthy"
 		mongo["mongodb"] = false
@@ -58,5 +64,6 @@ func (controller *HealthController) HealthyDependencies(ctx *gin.Context) {
 		ctx.JSON(http.StatusServiceUnavailable, output)
 		return
 	}
+
 	ctx.JSON(http.StatusOK, output)
 }

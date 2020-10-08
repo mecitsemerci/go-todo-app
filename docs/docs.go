@@ -83,14 +83,14 @@ var doc = `{
                 "tags": [
                     "Todo"
                 ],
-                "summary": "Find all todo",
+                "summary": "Get all todo",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/todoDto.TodoOutput"
+                                "$ref": "#/definitions/dto.TodoOutput"
                             }
                         }
                     },
@@ -135,7 +135,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/todoDto.CreateTodoInput"
+                            "$ref": "#/definitions/dto.CreateTodoInput"
                         }
                     }
                 ],
@@ -143,7 +143,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/todoDto.CreateTodoOutput"
+                            "$ref": "#/definitions/dto.CreateTodoOutput"
                         }
                     },
                     "400": {
@@ -193,7 +193,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/todoDto.TodoOutput"
+                            "$ref": "#/definitions/dto.TodoOutput"
                         }
                     },
                     "400": {
@@ -242,7 +242,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/todoDto.UpdateTodoInput"
+                            "$ref": "#/definitions/dto.UpdateTodoInput"
                         }
                     }
                 ],
@@ -250,7 +250,7 @@ var doc = `{
                     "204": {
                         "description": "No Content",
                         "schema": {
-                            "$ref": "#/definitions/todoDto.TodoOutput"
+                            "$ref": "#/definitions/dto.TodoOutput"
                         }
                     },
                     "400": {
@@ -298,7 +298,7 @@ var doc = `{
                     "204": {
                         "description": "No Content",
                         "schema": {
-                            "$ref": "#/definitions/todoDto.TodoOutput"
+                            "$ref": "#/definitions/dto.TodoOutput"
                         }
                     },
                     "400": {
@@ -324,6 +324,29 @@ var doc = `{
         }
     },
     "definitions": {
+        "dto.CreateTodoInput": {
+            "type": "object",
+            "required": [
+                "description",
+                "title"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.CreateTodoOutput": {
+            "type": "object",
+            "properties": {
+                "todo_id": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.ErrorOutput": {
             "type": "object",
             "properties": {
@@ -356,32 +379,13 @@ var doc = `{
                 }
             }
         },
-        "todoDto.CreateTodoInput": {
+        "dto.TodoOutput": {
             "type": "object",
-            "required": [
-                "description",
-                "title"
-            ],
             "properties": {
-                "description": {
-                    "type": "string"
+                "completed": {
+                    "type": "boolean",
+                    "example": false
                 },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "todoDto.CreateTodoOutput": {
-            "type": "object",
-            "properties": {
-                "todo_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "todoDto.TodoOutput": {
-            "type": "object",
-            "properties": {
                 "created_at": {
                     "type": "string",
                     "example": "2020-07-28T07:32:32.71472Z"
@@ -392,11 +396,7 @@ var doc = `{
                 },
                 "id": {
                     "type": "string",
-                    "example": "6ba7b811-9dad-11d1-80b4-00c04fd430c8"
-                },
-                "is_done": {
-                    "type": "boolean",
-                    "example": false
+                    "example": "5f68b3f08c111c96d1f8d9a3"
                 },
                 "title": {
                     "type": "string",
@@ -408,18 +408,18 @@ var doc = `{
                 }
             }
         },
-        "todoDto.UpdateTodoInput": {
+        "dto.UpdateTodoInput": {
             "type": "object",
             "required": [
                 "description",
                 "title"
             ],
             "properties": {
+                "completed": {
+                    "type": "boolean"
+                },
                 "description": {
                     "type": "string"
-                },
-                "is_done": {
-                    "type": "boolean"
                 },
                 "title": {
                     "type": "string"
