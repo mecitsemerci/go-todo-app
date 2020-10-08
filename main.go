@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/mecitsemerci/clean-go-todo-api/app"
+	"log"
 )
 
 // @title Todo Example API
@@ -10,5 +11,10 @@ import (
 // @host localhost:8080
 // @BasePath /
 func main() {
-	app.Init()
+
+	// Run app
+	if err := app.Init().Run(); err != nil {
+		log.Fatal(err)
+		return
+	}
 }

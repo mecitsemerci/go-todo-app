@@ -19,10 +19,15 @@ func InitializeTodoControllerV1() v1.TodoController {
 	dbContext := adapter.ProvideDbContext()
 	iTodoRepository := adapter.ProvideTodoRepository(dbContext)
 	iTodoService := core.ProvideTodoService(iTodoRepository)
-	todoController := controller.ProvideController(iTodoService)
+	todoController := controller.ProvideTodoController(iTodoService)
 	return todoController
 }
 
 // wired.go:
 
 var todoServiceSet = wire.NewSet(core.ProvideTodoService, adapter.ProvideTodoRepository, adapter.ProvideDbContext)
+
+func InitializeHealthController() controller.HealthController {
+	wire.Bind(controller.ProvideHealthController, adapter.ProvideDbContext)
+	return controller.HealthController{}
+}

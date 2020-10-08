@@ -8,8 +8,12 @@ import (
 type Todo struct {
 	Id          primitive.ObjectID `bson:"_id,omitempty"`
 	Title       string             `bson:"title,omitempty"`
-	Description string             `bson:"description,omitempty"`
-	IsDone      bool               `bson:"is_done,omitempty"`
+	Description string             `bson:"description"`
+	Completed   bool               `bson:"completed"`
 	CreatedAt   time.Time          `bson:"created_at,omitempty"`
 	UpdatedAt   time.Time          `bson:"updated_at,omitempty"`
+}
+
+func (t *Todo) ID() string {
+	return t.Id.Hex()
 }

@@ -3,7 +3,8 @@ package mongodb
 import (
 	"errors"
 	"github.com/mecitsemerci/clean-go-todo-api/app/core/domain/todo"
-	"github.com/mecitsemerci/clean-go-todo-api/app/infra/utility"
+	"github.com/mecitsemerci/clean-go-todo-api/app/infra/constants"
+	"github.com/mecitsemerci/clean-go-todo-api/app/infra/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -56,12 +57,13 @@ func (adapter *TodoAdapter) GetAll() ([]*todo.Todo, error) {
 
 func (adapter *TodoAdapter) GetById(id string) (*todo.Todo, error) {
 	var item todo.Todo
-	// ObjectId
-	oid, err := primitive.ObjectIDFromHex(id)
+
+	oid, err := utils.OIDFromStr(id)
 
 	if err != nil {
 		return nil, err
 	}
+
 	//Filter
 	filter := bson.M{"_id": bson.M{"$eq": oid}}
 
@@ -83,10 +85,10 @@ func (adapter *TodoAdapter) GetById(id string) (*todo.Todo, error) {
 
 func (adapter *TodoAdapter) Insert(todo todo.Todo) (string, error) {
 	// Set Fields
-	todo.Id = primitive.NewObjectIDFromTimestamp(utility.UtcNow())
-	todo.CreatedAt = utility.UtcNow()
-	todo.UpdatedAt = utility.UtcNow()
-
+	todo.Id = utils.NewOID()
+	todo.CreatedAt = utils.UtcNow()
+	todo.UpdatedAt = utils.UtcNow()
+	todo.Completed = false
 	//Connect
 	adapter.DbCtx.Connect()
 
@@ -97,7 +99,7 @@ func (adapter *TodoAdapter) Insert(todo todo.Todo) (string, error) {
 	defer adapter.DbCtx.Disconnect()
 
 	if err != nil {
-		return primitive.NilObjectID.Hex(), err
+		return constants.EmptyString, err
 	}
 
 	// Return inserted item id
@@ -112,8 +114,8 @@ func (adapter *TodoAdapter) Update(todo todo.Todo) error {
 	update := bson.M{"$set": bson.M{
 		"title":       todo.Title,
 		"description": todo.Description,
-		"is_done":     todo.IsDone,
-		"updated_at":  utility.UtcNow(),
+		"completed":   todo.Completed,
+		"updated_at":  utils.UtcNow(),
 	}}
 
 	//Connect
@@ -136,10 +138,12 @@ func (adapter *TodoAdapter) Update(todo todo.Todo) error {
 }
 
 func (adapter *TodoAdapter) Delete(id string) error {
-	oid, err := primitive.ObjectIDFromHex(id)
+	oid, err := utils.OIDFromStr(id)
+
 	if err != nil {
 		return err
 	}
+
 	//Filter
 	filter := bson.M{"_id": bson.M{"$eq": oid}}
 

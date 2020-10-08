@@ -1,5 +1,20 @@
 basePath: /
 definitions:
+  dto.CreateTodoInput:
+    properties:
+      description:
+        type: string
+      title:
+        type: string
+    required:
+    - description
+    - title
+    type: object
+  dto.CreateTodoOutput:
+    properties:
+      todo_id:
+        type: string
+    type: object
   dto.ErrorOutput:
     properties:
       code:
@@ -21,23 +36,11 @@ definitions:
         example: healthy
         type: string
     type: object
-  todoDto.CreateTodoInput:
+  dto.TodoOutput:
     properties:
-      description:
-        type: string
-      title:
-        type: string
-    required:
-    - description
-    - title
-    type: object
-  todoDto.CreateTodoOutput:
-    properties:
-      todo_id:
-        type: string
-    type: object
-  todoDto.TodoOutput:
-    properties:
+      completed:
+        example: false
+        type: boolean
       created_at:
         example: "2020-07-28T07:32:32.71472Z"
         type: string
@@ -45,11 +48,8 @@ definitions:
         example: Market shopping
         type: string
       id:
-        example: 6ba7b811-9dad-11d1-80b4-00c04fd430c8
+        example: 5f68b3f08c111c96d1f8d9a3
         type: string
-      is_done:
-        example: false
-        type: boolean
       title:
         example: Shopping
         type: string
@@ -57,12 +57,12 @@ definitions:
         example: "2020-07-30T07:32:32.71472Z"
         type: string
     type: object
-  todoDto.UpdateTodoInput:
+  dto.UpdateTodoInput:
     properties:
+      completed:
+        type: boolean
       description:
         type: string
-      is_done:
-        type: boolean
       title:
         type: string
     required:
@@ -119,7 +119,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/todoDto.TodoOutput'
+              $ref: '#/definitions/dto.TodoOutput'
             type: array
         "400":
           description: Bad Request
@@ -133,7 +133,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/dto.ErrorOutput'
-      summary: Find all todo
+      summary: Get all todo
       tags:
       - Todo
   /api/v1/todo/:
@@ -147,14 +147,14 @@ paths:
         name: todo
         required: true
         schema:
-          $ref: '#/definitions/todoDto.CreateTodoInput'
+          $ref: '#/definitions/dto.CreateTodoInput'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/todoDto.CreateTodoOutput'
+            $ref: '#/definitions/dto.CreateTodoOutput'
         "400":
           description: Bad Request
           schema:
@@ -187,7 +187,7 @@ paths:
         "204":
           description: No Content
           schema:
-            $ref: '#/definitions/todoDto.TodoOutput'
+            $ref: '#/definitions/dto.TodoOutput'
         "400":
           description: Bad Request
           schema:
@@ -219,7 +219,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/todoDto.TodoOutput'
+            $ref: '#/definitions/dto.TodoOutput'
         "400":
           description: Bad Request
           schema:
@@ -250,14 +250,14 @@ paths:
         name: todo
         required: true
         schema:
-          $ref: '#/definitions/todoDto.UpdateTodoInput'
+          $ref: '#/definitions/dto.UpdateTodoInput'
       produces:
       - application/json
       responses:
         "204":
           description: No Content
           schema:
-            $ref: '#/definitions/todoDto.TodoOutput'
+            $ref: '#/definitions/dto.TodoOutput'
         "400":
           description: Bad Request
           schema:

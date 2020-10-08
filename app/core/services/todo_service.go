@@ -2,6 +2,7 @@ package services
 
 import (
 	"github.com/mecitsemerci/clean-go-todo-api/app/core/domain/todo"
+	"github.com/mecitsemerci/clean-go-todo-api/app/infra/constants"
 )
 
 type ITodoService interface {
@@ -38,7 +39,7 @@ func (service *TodoService) Find(todoId string) (*todo.Todo, error) {
 func (service *TodoService) Create(todo todo.Todo) (string, error) {
 	id, err := service.TodoRepository.Insert(todo)
 	if err != nil {
-		return "", err
+		return constants.EmptyString, err
 	}
 	return id, nil
 }
