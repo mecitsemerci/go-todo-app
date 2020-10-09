@@ -1,8 +1,7 @@
-package entities
+package mongodb
 
 import (
 	"github.com/mecitsemerci/clean-go-todo-api/app/core/domain/todo"
-	"github.com/mecitsemerci/clean-go-todo-api/app/infra/idgenerator"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )
@@ -17,7 +16,7 @@ type Todo struct {
 }
 
 func (e *Todo) FromModel(m *todo.Todo) error {
-	oid, err := idgenerator.ObjectIDFromID(m.Id)
+	oid, err := primitive.ObjectIDFromHex(m.Id.String())
 	if err != nil {
 		return err
 	}
@@ -31,8 +30,9 @@ func (e *Todo) FromModel(m *todo.Todo) error {
 }
 
 func (e *Todo) ToModel() *todo.Todo {
+	oid := ObjectId(e.Id)
 	return &todo.Todo{
-		Id:          idgenerator.IDFromObjectID(e.Id),
+		Id:          &oid,
 		Title:       e.Title,
 		Description: e.Description,
 		Completed:   e.Completed,

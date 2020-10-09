@@ -1,8 +1,8 @@
 package dto
 
 import (
-	"github.com/mecitsemerci/clean-go-todo-api/app/core/domain"
 	"github.com/mecitsemerci/clean-go-todo-api/app/core/domain/todo"
+	"github.com/mecitsemerci/clean-go-todo-api/app/infra/idgenerator"
 	"time"
 )
 
@@ -54,7 +54,7 @@ type UpdateTodoInput struct {
 
 func (dto *UpdateTodoInput) ToModel(id string) (*todo.Todo, error) {
 	return &todo.Todo{
-		Id:          domain.ID(id),
+		Id:          idgenerator.IDFromString(id),
 		Title:       *dto.Title,
 		Description: *dto.Description,
 		Completed:   *dto.Completed,

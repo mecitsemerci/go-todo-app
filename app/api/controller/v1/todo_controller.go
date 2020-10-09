@@ -3,10 +3,10 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/mecitsemerci/clean-go-todo-api/app/api/dto"
-	"github.com/mecitsemerci/clean-go-todo-api/app/core/domain"
 	"github.com/mecitsemerci/clean-go-todo-api/app/core/services"
 	"github.com/mecitsemerci/clean-go-todo-api/app/infra/check"
 	"github.com/mecitsemerci/clean-go-todo-api/app/infra/httperrors"
+	"github.com/mecitsemerci/clean-go-todo-api/app/infra/idgenerator"
 	"github.com/mecitsemerci/clean-go-todo-api/app/infra/validator"
 	"net/http"
 )
@@ -48,7 +48,7 @@ func (controller *TodoController) GetAll(ctx *gin.Context) {
 		httperrors.NewError(ctx, http.StatusUnprocessableEntity, "Something went wrong!", err)
 		return
 	}
-	var result []dto.TodoOutput
+	var result = make([]dto.TodoOutput, 0)
 	todoOutputDto := dto.TodoOutput{}
 	for _, model := range todoList {
 		result = append(result, todoOutputDto.FromModel(*model))
@@ -77,7 +77,7 @@ func (controller *TodoController) Find(ctx *gin.Context) {
 		return
 	}
 
-	todoModel, err := controller.TodoService.Find(domain.ID(todoId))
+	todoModel, err := controller.TodoService.Find(idgenerator.IDFromString(todoId))
 
 	if err != nil {
 		httperrors.NewError(ctx, http.StatusUnprocessableEntity, "Item is not exist.", err)
@@ -195,7 +195,7 @@ func (controller *TodoController) Delete(ctx *gin.Context) {
 		return
 	}
 
-	err := controller.TodoService.Delete(domain.ID(todoId))
+	err := controller.TodoService.Delete(idgenerator.IDFromString(todoId))
 
 	if err != nil {
 		httperrors.NewError(ctx, http.StatusNotFound, "The item failed to delete.", err)
