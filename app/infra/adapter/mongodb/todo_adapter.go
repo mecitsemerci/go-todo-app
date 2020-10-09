@@ -4,9 +4,7 @@ import (
 	"errors"
 	"github.com/mecitsemerci/clean-go-todo-api/app/core/domain"
 	"github.com/mecitsemerci/clean-go-todo-api/app/core/domain/todo"
-	"github.com/mecitsemerci/clean-go-todo-api/app/infra/adapter/mongodb/entities"
 	"github.com/mecitsemerci/clean-go-todo-api/app/infra/datetime"
-	"github.com/mecitsemerci/clean-go-todo-api/app/infra/idgenerator"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -37,7 +35,7 @@ func (adapter *TodoAdapter) GetAll() ([]*todo.Todo, error) {
 	}
 
 	for cur.Next(adapter.DbCtx.Context) {
-		var entity entities.Todo
+		var entity Todo
 		err := cur.Decode(&entity)
 		if err != nil {
 			log.Println(err.Error())
@@ -58,22 +56,18 @@ func (adapter *TodoAdapter) GetAll() ([]*todo.Todo, error) {
 }
 
 func (adapter *TodoAdapter) GetById(id domain.ID) (*todo.Todo, error) {
-	var entity entities.Todo
-
-	oid, err := idgenerator.ObjectIDFromID(id)
-
+	var t Todo
+	oid, err := primitive.ObjectIDFromHex(id.String())
 	if err != nil {
 		return nil, err
 	}
-
 	//Filter
 	filter := bson.M{"_id": bson.M{"$eq": oid}}
 
 	//Connect
 	adapter.DbCtx.Connect()
-
 	//Find Item by Id
-	err = adapter.DbCtx.TodoCollection.FindOne(adapter.DbCtx.Context, filter).Decode(&entity)
+	err = adapter.DbCtx.TodoCollection.FindOne(adapter.DbCtx.Context, filter).Decode(&t)
 
 	//Disconnect
 	defer adapter.DbCtx.Disconnect()
@@ -82,13 +76,13 @@ func (adapter *TodoAdapter) GetById(id domain.ID) (*todo.Todo, error) {
 		return nil, err
 	}
 
-	return entity.ToModel(), nil
+	return t.ToModel(), nil
 }
 
 func (adapter *TodoAdapter) Insert(todo todo.Todo) (domain.ID, error) {
-	// Set Fields
-	var entity entities.Todo
-	err := entity.FromModel(&todo)
+	// Data object
+	var t Todo
+	err := t.FromModel(&todo)
 	if err != nil {
 		return domain.NilID, err
 	}
@@ -96,7 +90,7 @@ func (adapter *TodoAdapter) Insert(todo todo.Todo) (domain.ID, error) {
 	adapter.DbCtx.Connect()
 
 	//Insert Item
-	result, err := adapter.DbCtx.TodoCollection.InsertOne(adapter.DbCtx.Context, todo)
+	result, err := adapter.DbCtx.TodoCollection.InsertOne(adapter.DbCtx.Context, t)
 
 	//Disconnect
 	defer adapter.DbCtx.Disconnect()
@@ -106,21 +100,21 @@ func (adapter *TodoAdapter) Insert(todo todo.Todo) (domain.ID, error) {
 	}
 
 	// Return inserted item id
-	return idgenerator.IDFromObjectID(result.InsertedID.(primitive.ObjectID)), nil
+	var oid ObjectId
+	oid.Set(result.InsertedID.(primitive.ObjectID).Hex())
+	return &oid, nil
 }
 
 func (adapter *TodoAdapter) Update(todo todo.Todo) error {
-	oid, err := idgenerator.ObjectIDFromID(todo.Id)
-
+	oid, err := primitive.ObjectIDFromHex(todo.Id.String())
 	if err != nil {
 		return err
 	}
-
 	//Filter
 	filter := bson.M{"_id": bson.M{"$eq": oid}}
 
 	//Update fields
-	update := bson.M{"$set": bson.M{
+	document := bson.M{"$set": bson.M{
 		"title":       todo.Title,
 		"description": todo.Description,
 		"completed":   todo.Completed,
@@ -131,7 +125,7 @@ func (adapter *TodoAdapter) Update(todo todo.Todo) error {
 	adapter.DbCtx.Connect()
 
 	//Update Item
-	result, err := adapter.DbCtx.TodoCollection.UpdateOne(adapter.DbCtx.Context, filter, update)
+	result, err := adapter.DbCtx.TodoCollection.UpdateOne(adapter.DbCtx.Context, filter, document)
 
 	//Disconnect
 	defer adapter.DbCtx.Disconnect()
@@ -147,8 +141,7 @@ func (adapter *TodoAdapter) Update(todo todo.Todo) error {
 }
 
 func (adapter *TodoAdapter) Delete(id domain.ID) error {
-	oid, err := idgenerator.ObjectIDFromID(id)
-
+	oid, err := primitive.ObjectIDFromHex(id.String())
 	if err != nil {
 		return err
 	}
