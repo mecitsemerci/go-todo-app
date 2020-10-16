@@ -88,16 +88,6 @@ https://github.com/google/wire
     │   │       ├── todo_service.go
     │   │       └── todo_service_test.go
     │   └── infra
-    │       ├── adapter
-    │       │   ├── mongodb
-    │       │   │   ├── db_context.go
-    │       │   │   ├── entities.go
-    │       │   │   ├── object_id.go
-    │       │   │   ├── todo_adapter.go
-    │       │   │   └── todo_adapter_test.go
-    │       │   └── provider.go
-    │       ├── check
-    │       │   └── check.go
     │       ├── config
     │       │   └── app.go
     │       ├── constants
@@ -113,6 +103,14 @@ https://github.com/google/wire
     │       ├── infra.go
     │       ├── mock
     │       │   └── mock.go
+    │       ├── repository
+    │       │   ├── mongodb
+    │       │   │   ├── db_context.go
+    │       │   │   ├── entities.go
+    │       │   │   ├── object_id.go
+    │       │   │   ├── todo_repository.go
+    │       │   │   └── todo_repository_test.go
+    │       │   └── provider.go
     │       ├── validator
     │       │   └── validator.go
     │       └── wired

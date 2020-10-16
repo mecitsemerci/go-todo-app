@@ -43,7 +43,6 @@ func (controller *TodoController) Register(apiRouteGroup *gin.RouterGroup) {
 // @Router /api/v1/todo [get]
 func (controller *TodoController) GetAll(ctx *gin.Context) {
 	todoList, err := controller.TodoService.GetAll()
-
 	if err != nil {
 		httperrors.NewError(ctx, http.StatusUnprocessableEntity, "Something went wrong!", err)
 		return

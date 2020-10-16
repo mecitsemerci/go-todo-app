@@ -3,7 +3,7 @@ package controller
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/mecitsemerci/clean-go-todo-api/app/api/dto"
-	"github.com/mecitsemerci/clean-go-todo-api/app/infra/adapter/mongodb"
+	"github.com/mecitsemerci/clean-go-todo-api/app/infra/repository/mongodb"
 	"net/http"
 	"time"
 )

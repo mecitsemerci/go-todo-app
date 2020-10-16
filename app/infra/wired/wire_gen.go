@@ -10,14 +10,14 @@ import (
 	"github.com/mecitsemerci/clean-go-todo-api/app/api/controller"
 	"github.com/mecitsemerci/clean-go-todo-api/app/api/controller/v1"
 	"github.com/mecitsemerci/clean-go-todo-api/app/core"
-	"github.com/mecitsemerci/clean-go-todo-api/app/infra/adapter"
+	"github.com/mecitsemerci/clean-go-todo-api/app/infra/repository"
 )
 
 // Injectors from wired.go:
 
 func InitializeTodoControllerV1() v1.TodoController {
-	dbContext := adapter.ProvideDbContext()
-	iTodoRepository := adapter.ProvideTodoRepository(dbContext)
+	dbContext := repository.ProvideDbContext()
+	iTodoRepository := repository.ProvideTodoRepository(dbContext)
 	iTodoService := core.ProvideTodoService(iTodoRepository)
 	todoController := controller.ProvideTodoController(iTodoService)
 	return todoController
@@ -25,9 +25,9 @@ func InitializeTodoControllerV1() v1.TodoController {
 
 // wired.go:
 
-var todoServiceSet = wire.NewSet(core.ProvideTodoService, adapter.ProvideTodoRepository, adapter.ProvideDbContext)
+var todoServiceSet = wire.NewSet(core.ProvideTodoService, repository.ProvideTodoRepository, repository.ProvideDbContext)
 
 func InitializeHealthController() controller.HealthController {
-	wire.Bind(controller.ProvideHealthController, adapter.ProvideDbContext)
+	wire.Bind(controller.ProvideHealthController, repository.ProvideDbContext)
 	return controller.HealthController{}
 }
