@@ -2,7 +2,7 @@ package idgenerator
 
 import (
 	"github.com/mecitsemerci/clean-go-todo-api/app/core/domain"
-	"github.com/mecitsemerci/clean-go-todo-api/app/infra/adapter/mongodb"
+	"github.com/mecitsemerci/clean-go-todo-api/app/infra/repository/mongodb"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )

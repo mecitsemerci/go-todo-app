@@ -7,10 +7,10 @@ import (
 	"github.com/mecitsemerci/clean-go-todo-api/app/api/controller"
 	v1 "github.com/mecitsemerci/clean-go-todo-api/app/api/controller/v1"
 	"github.com/mecitsemerci/clean-go-todo-api/app/core"
-	"github.com/mecitsemerci/clean-go-todo-api/app/infra/adapter"
+	"github.com/mecitsemerci/clean-go-todo-api/app/infra/repository"
 )
 
-var todoServiceSet = wire.NewSet(core.ProvideTodoService, adapter.ProvideTodoRepository, adapter.ProvideDbContext)
+var todoServiceSet = wire.NewSet(core.ProvideTodoService, repository.ProvideTodoRepository, repository.ProvideDbContext)
 
 func InitializeTodoControllerV1() v1.TodoController {
 
@@ -20,6 +20,6 @@ func InitializeTodoControllerV1() v1.TodoController {
 }
 
 func InitializeHealthController() controller.HealthController {
-	wire.Bind(controller.ProvideHealthController, adapter.ProvideDbContext)
+	wire.Bind(controller.ProvideHealthController, repository.ProvideDbContext)
 	return controller.HealthController{}
 }
