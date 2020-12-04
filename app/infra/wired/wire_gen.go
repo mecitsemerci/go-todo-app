@@ -8,14 +8,13 @@ package wired
 import (
 	"github.com/google/wire"
 	"github.com/mecitsemerci/clean-go-todo-api/app/api/controller"
-	"github.com/mecitsemerci/clean-go-todo-api/app/api/controller/v1"
 	"github.com/mecitsemerci/clean-go-todo-api/app/core"
 	"github.com/mecitsemerci/clean-go-todo-api/app/infra/repository"
 )
 
 // Injectors from wired.go:
 
-func InitializeTodoControllerV1() v1.TodoController {
+func InitializeTodoControllerV1() controller.TodoControllerV1 {
 	dbContext := repository.ProvideDbContext()
 	iTodoRepository := repository.ProvideTodoRepository(dbContext)
 	iTodoService := core.ProvideTodoService(iTodoRepository)

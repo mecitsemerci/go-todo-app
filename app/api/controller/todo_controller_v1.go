@@ -1,4 +1,4 @@
-package v1
+package controller
 
 import (
 	"github.com/gin-gonic/gin"
@@ -11,15 +11,15 @@ import (
 	"net/http"
 )
 
-type TodoController struct {
+type TodoControllerV1 struct {
 	TodoService services.ITodoService
 }
 
-func NewTodoController(todoService services.ITodoService) TodoController {
-	return TodoController{TodoService: todoService}
+func NewTodoController(todoService services.ITodoService) TodoControllerV1 {
+	return TodoControllerV1{TodoService: todoService}
 }
 
-func (controller *TodoController) Register(apiRouteGroup *gin.RouterGroup) {
+func (controller *TodoControllerV1) Register(apiRouteGroup *gin.RouterGroup) {
 	router := apiRouteGroup.Group("/todo")
 	{
 		router.GET("/", controller.GetAll)
@@ -41,7 +41,7 @@ func (controller *TodoController) Register(apiRouteGroup *gin.RouterGroup) {
 // @Failure 422 {object} dto.ErrorOutput
 // @Failure 500 {object} dto.ErrorOutput
 // @Router /api/v1/todo [get]
-func (controller *TodoController) GetAll(ctx *gin.Context) {
+func (controller *TodoControllerV1) GetAll(ctx *gin.Context) {
 	todoList, err := controller.TodoService.GetAll()
 	if err != nil {
 		httperrors.NewError(ctx, http.StatusUnprocessableEntity, "Something went wrong!", err)
@@ -67,7 +67,7 @@ func (controller *TodoController) GetAll(ctx *gin.Context) {
 // @Failure 404 {object} dto.ErrorOutput
 // @Failure 500 {object} dto.ErrorOutput
 // @Router /api/v1/todo/{id} [get]
-func (controller *TodoController) Find(ctx *gin.Context) {
+func (controller *TodoControllerV1) Find(ctx *gin.Context) {
 
 	todoId := ctx.Param("id")
 
@@ -100,7 +100,7 @@ func (controller *TodoController) Find(ctx *gin.Context) {
 // @Failure 422 {object} dto.ErrorOutput
 // @Failure 500 {object} dto.ErrorOutput
 // @Router /api/v1/todo/ [post]
-func (controller *TodoController) Create(ctx *gin.Context) {
+func (controller *TodoControllerV1) Create(ctx *gin.Context) {
 	var createTodoInput dto.CreateTodoInput
 	if err := ctx.ShouldBindJSON(&createTodoInput); err != nil {
 		httperrors.NewError(ctx, http.StatusBadRequest, "Request model is invalid.", err)
@@ -138,7 +138,7 @@ func (controller *TodoController) Create(ctx *gin.Context) {
 // @Failure 404 {object} dto.ErrorOutput
 // @Failure 500 {object} dto.ErrorOutput
 // @Router /api/v1/todo/{id} [put]
-func (controller *TodoController) Update(ctx *gin.Context) {
+func (controller *TodoControllerV1) Update(ctx *gin.Context) {
 
 	todoId := ctx.Param("id")
 	if check.IsEmptyOrWhiteSpace(todoId) {
@@ -186,7 +186,7 @@ func (controller *TodoController) Update(ctx *gin.Context) {
 // @Failure 404 {object} dto.ErrorOutput
 // @Failure 500 {object} dto.ErrorOutput
 // @Router /api/v1/todo/{id} [delete]
-func (controller *TodoController) Delete(ctx *gin.Context) {
+func (controller *TodoControllerV1) Delete(ctx *gin.Context) {
 
 	todoId := ctx.Param("id")
 	if check.IsEmptyOrWhiteSpace(todoId) {
