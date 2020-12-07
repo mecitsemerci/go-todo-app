@@ -1,4 +1,4 @@
-![example workflow name](https://github.com/mecitsemerci/clean-go-todo-api/workflows/Go/badge.svg)
+![Go](https://github.com/mecitsemerci/clean-go-todo-api/workflows/Go/badge.svg?branch=master)
 
 # Clean Architecture Todo REST API with Go
 
