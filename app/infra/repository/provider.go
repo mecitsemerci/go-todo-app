@@ -11,6 +11,6 @@ func ProvideDbContext() mongodb.DbContext  {
 }
 
 //Repository
-func ProvideTodoRepository(dbContext mongodb.DbContext) todo.ITodoRepository {
+func ProvideTodoRepository(dbContext mongodb.DbContext) todo.Repository {
 	return mongodb.NewTodoRepository(dbContext)
 }

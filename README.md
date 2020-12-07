@@ -57,68 +57,67 @@ Check `wire_gen.go` file under `app/infra/wired`directory for differences. Don't
 https://github.com/google/wire
  
 ### Folder Structure
-    
-     .
-     ├── Dockerfile
-     ├── README.md
-     ├── app
-     │   ├── api
-     │   │   ├── api.go
-     │   │   ├── controller
-     │   │   │   ├── health_controller.go
-     │   │   │   ├── provider.go
-     │   │   │   └── todo_controller_v1.go
-     │   │   ├── dto
-     │   │   │   ├── error.go
-     │   │   │   ├── health.go
-     │   │   │   └── todo.go
-     │   │   └── middleware
-     │   ├── app.go
-     │   ├── core
-     │   │   ├── domain
-     │   │   │   ├── identity.go
-     │   │   │   └── todo
-     │   │   │       ├── mock.go
-     │   │   │       ├── todo.go
-     │   │   │       └── todo_repository.go
-     │   │   ├── provider.go
-     │   │   └── services
-     │   │       ├── mock.go
-     │   │       ├── todo_service.go
-     │   │       └── todo_service_test.go
-     │   └── infra
-     │       ├── check
-     │       │   └── check.go
-     │       ├── config
-     │       │   └── app.go
-     │       ├── constants
-     │       │   └── constants.go
-     │       ├── datetime
-     │       │   └── datetime.go
-     │       ├── faker
-     │       │   └── faker.go
-     │       ├── httperrors
-     │       │   └── errors.go
-     │       ├── idgenerator
-     │       │   └── idgenerator.go
-     │       ├── infra.go
-     │       ├── mock
-     │       │   └── mock.go
-     │       ├── repository
-     │       │   ├── mongodb
-     │       │   │   ├── db_context.go
-     │       │   │   ├── entities.go
-     │       │   │   ├── object_id.go
-     │       │   │   ├── todo_repository.go
-     │       │   │   └── todo_repository_test.go
-     │       │   └── provider.go
-     │       ├── validator
-     │       │   └── validator.go
-     │       └── wired
-     │           ├── wire_gen.go
-     │           └── wired.go
-     ├── docker-compose.yml
-     ├── go.mod
-     ├── go.sum
-     ├── main.go
-     └── wire.sh
+    .
+    ├── Dockerfile
+    ├── README.md
+    ├── app
+    │   ├── api
+    │   │   ├── api.go
+    │   │   ├── controller
+    │   │   │   ├── health_controller.go
+    │   │   │   ├── provider.go
+    │   │   │   └── todo_controller.go
+    │   │   ├── dto
+    │   │   │   ├── error.go
+    │   │   │   ├── health.go
+    │   │   │   └── todo.go
+    │   │   └── middleware
+    │   ├── app.go
+    │   ├── core
+    │   │   ├── domain
+    │   │   │   ├── identity.go
+    │   │   │   └── todo
+    │   │   │       ├── mock.go
+    │   │   │       ├── repository.go
+    │   │   │       └── todo.go
+    │   │   ├── provider.go
+    │   │   └── services
+    │   │       ├── mock.go
+    │   │       ├── todo_service.go
+    │   │       └── todo_service_test.go
+    │   └── infra
+    │       ├── check
+    │       │   └── check.go
+    │       ├── config
+    │       │   └── app.go
+    │       ├── constants
+    │       │   └── constants.go
+    │       ├── datetime
+    │       │   └── datetime.go
+    │       ├── faker
+    │       │   └── faker.go
+    │       ├── httperrors
+    │       │   └── errors.go
+    │       ├── idgenerator
+    │       │   └── idgenerator.go
+    │       ├── infra.go
+    │       ├── mock
+    │       │   └── mock.go
+    │       ├── repository
+    │       │   ├── mongodb
+    │       │   │   ├── db_context.go
+    │       │   │   ├── entities.go
+    │       │   │   ├── object_id.go
+    │       │   │   ├── todo_repository.go
+    │       │   │   └── todo_repository_test.go
+    │       │   └── provider.go
+    │       ├── validator
+    │       │   └── validator.go
+    │       └── wired
+    │           ├── wire_gen.go
+    │           └── wired.go
+    ├── docker-compose.yml
+    ├── go.mod
+    ├── go.sum
+    ├── main.go
+    └── wire.sh
