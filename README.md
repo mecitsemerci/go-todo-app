@@ -1,8 +1,10 @@
+![example workflow name](https://github.com/mecitsemerci/clean-go-todo-api/workflows/Go/badge.svg)
+
 # Clean Architecture Todo REST API with Go
 
 This repository is a sample go lang web project built according to Clean Architecture.  
 
-## Build with
+## Build with 
 * Gin Web Framework
 * Docker support
 * Swagger UI support
