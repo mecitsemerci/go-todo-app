@@ -15,10 +15,10 @@ type ITodoService interface {
 	Delete(todoId domain.ID) error
 }
 type TodoService struct {
-	TodoRepository todo.ITodoRepository
+	TodoRepository todo.Repository
 }
 
-func NewTodoService(todoRepository todo.ITodoRepository) *TodoService {
+func NewTodoService(todoRepository todo.Repository) *TodoService {
 	return &TodoService{TodoRepository: todoRepository}
 }
 
