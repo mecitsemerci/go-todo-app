@@ -2,21 +2,21 @@ version: '3'
 # Define services
 services:
   # App Service
-  app:
+  api:
     # Configuration for building the docker image for the service
     build:
       context: . # Use an image built from the specified dockerfile in the current directory.
       dockerfile: Dockerfile
     environment:
-      - MongoDbUrl=mongodb://tododb:27017
-      - MongoDbName=TodoDb
+      - MONGODB_URL=mongodb://mongo:27017
+      - MONGODB_TODO_DB=TodoDb
     ports:
       - "8080:8080" # Forward the exposed port 8080 on the container to port 8080 on the host machine
     restart: unless-stopped
     depends_on:
-      - tododb
-  tododb:
-    image: mongo
+      - mongo
+  mongo:
+    image: mongo:3
     ports:
       - '27017:27017'
 

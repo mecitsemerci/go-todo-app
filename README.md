@@ -1,125 +1,36 @@
-![Go](https://github.com/mecitsemerci/clean-go-todo-api/workflows/Go/badge.svg?branch=master)
+![Go](https://github.com/mecitsemerci/go-todo-app/workflows/Go/badge.svg?branch=master)
 
-# Clean Architecture Todo REST API with Go
+# Clean Architecture Go Project Template
 
 This repository is a sample go lang web project built according to Clean Architecture.  
 
-## Build with 
-* Gin Web Framework
-* Docker support
-* Swagger UI support
-* MongoDb support
-* Wire (Dependency Injection) support 
+## Technologies
+* Web Framework (gin-gonic)
+* Docker
+* Swagger (swaggo)
+* NoSQL Database
+    * Mongodb (default)
+    * Redis (soon)
+* Dependency Injection (wire)
+* Unit/Integration Tests (testify)
 
-### Layers and Dependencies
+## Layers and Dependencies
 
-![image](./docs/img/layers.png)
+### cmd (application run)
+Main application executive folder. Don't put a lot of code in the application directory.
+The directory name for each application should match the name of the executable you want to have (e.g., /cmd/myapp).
+It's common to have a small main function that imports and invokes the code from the /internal and /pkg directories and nothing else.
 
-## API (HTTP Web Api Layer)
-This layer is handling all HTTP requests messages on controllers. 
-Routes and DTOs (Data Transfer Objects) are defined in this layer.
+### internal (application codes)
+Private application and library code. This is the code you don't want others importing in their applications or libraries.
+* **core** includes application core files (domain objects, interfaces). It has no dependencies on another layer. 
+* **pkg** includes external dependencies files and implementation of core interfaces.
 
-## CORE (Business Layer)
-This layer consists of business rules which has domain models and use cases. 
-There are mostly no external dependencies in this layer, no network connections, databases, etc. allowed.
-Data is transmitted to this layer via repositories and clients.
+### test (integration tests)
+Application integration test folder.
 
-## INFRA (Infrastructure Layer)
-All external dependencies are defined in this layer. 
-Connections with external data resources (api, database etc.) are made through this layer via clients and database providers.
-We can add configuration processes and utilities here.
+### web (application user interface)
+Web application specific components: static web assets, server side templates and SPAs.
 
-## Installation
- Open your terminal and clone this repository.
- 
-    git clone https://github.com/mecitsemerci/clean-go-todo-api.git
-
-If docker is running, run docker compose up command in the folder.
-
-    docker-compose up
-
-Check the app is running on http://localhost:8080/swagger/index.html
-
- ## Swagger UI Preview
- 
- ![image](./docs/img/Swagger_UI.png)
- 
-### Wire 
-
-If you want to change something on controller, service or repository, don't forget generate wire_gen.go
-
-Run command on your terminal
-
-```
-bash wire.sh
-```
-
-Check `wire_gen.go` file under `app/infra/wired`directory for differences. Don't change `wire_gen.go` file manually. If you want to learn wire usage check this repo.
-
-https://github.com/google/wire
- 
-### Folder Structure
-    .
-    ├── Dockerfile
-    ├── README.md
-    ├── app
-    │   ├── api
-    │   │   ├── api.go
-    │   │   ├── controller
-    │   │   │   ├── health_controller.go
-    │   │   │   ├── provider.go
-    │   │   │   └── todo_controller.go
-    │   │   ├── dto
-    │   │   │   ├── error.go
-    │   │   │   ├── health.go
-    │   │   │   └── todo.go
-    │   │   └── middleware
-    │   ├── app.go
-    │   ├── core
-    │   │   ├── domain
-    │   │   │   ├── identity.go
-    │   │   │   └── todo
-    │   │   │       ├── mock.go
-    │   │   │       ├── repository.go
-    │   │   │       └── todo.go
-    │   │   ├── provider.go
-    │   │   └── services
-    │   │       ├── mock.go
-    │   │       ├── todo_service.go
-    │   │       └── todo_service_test.go
-    │   └── infra
-    │       ├── check
-    │       │   └── check.go
-    │       ├── config
-    │       │   └── app.go
-    │       ├── constants
-    │       │   └── constants.go
-    │       ├── datetime
-    │       │   └── datetime.go
-    │       ├── faker
-    │       │   └── faker.go
-    │       ├── httperrors
-    │       │   └── errors.go
-    │       ├── idgenerator
-    │       │   └── idgenerator.go
-    │       ├── infra.go
-    │       ├── mock
-    │       │   └── mock.go
-    │       ├── repository
-    │       │   ├── mongodb
-    │       │   │   ├── db_context.go
-    │       │   │   ├── entities.go
-    │       │   │   ├── object_id.go
-    │       │   │   ├── todo_repository.go
-    │       │   │   └── todo_repository_test.go
-    │       │   └── provider.go
-    │       ├── validator
-    │       │   └── validator.go
-    │       └── wired
-    │           ├── wire_gen.go
-    │           └── wired.go
-    ├── docker-compose.yml
-    ├── go.mod
-    ├── go.sum
-    ├── main.go
-    └── wire.sh
+### docs
+open api (swagger) docs files

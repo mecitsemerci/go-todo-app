@@ -4,6 +4,8 @@ definitions:
     properties:
       description:
         type: string
+      priority_level:
+        type: integer
       title:
         type: string
     required:
@@ -28,10 +30,6 @@ definitions:
     type: object
   dto.HealthOutput:
     properties:
-      dependencies:
-        additionalProperties:
-          type: boolean
-        type: object
       status:
         example: healthy
         type: string
@@ -50,6 +48,9 @@ definitions:
       id:
         example: 5f68b3f08c111c96d1f8d9a3
         type: string
+      priority_level:
+        example: 0
+        type: integer
       title:
         example: Shopping
         type: string
@@ -63,6 +64,8 @@ definitions:
         type: boolean
       description:
         type: string
+      priority_level:
+        type: integer
       title:
         type: string
     required:
@@ -73,8 +76,7 @@ host: localhost:8080
 info:
   contact: {}
   description: This is a sample todo restful api server.
-  license: {}
-  title: Todo Example API
+  title: Todo API
   version: 1.0.0
 paths:
   /api/health:
@@ -82,21 +84,6 @@ paths:
       consumes:
       - application/json
       description: Get api healthy status
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.HealthOutput'
-      summary: Check api status
-      tags:
-      - Health Check
-  /api/health/dependencies:
-    get:
-      consumes:
-      - application/json
-      description: Get api healthy status with dependencies
       produces:
       - application/json
       responses:
@@ -129,14 +116,9 @@ paths:
           description: Unprocessable Entity
           schema:
             $ref: '#/definitions/dto.ErrorOutput'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/dto.ErrorOutput'
       summary: Get all todo
       tags:
       - Todo
-  /api/v1/todo/:
     post:
       consumes:
       - application/json
@@ -163,10 +145,6 @@ paths:
           description: Unprocessable Entity
           schema:
             $ref: '#/definitions/dto.ErrorOutput'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/dto.ErrorOutput'
       summary: Create a todo
       tags:
       - Todo
@@ -176,7 +154,7 @@ paths:
       - application/json
       description: Delete by todo id
       parameters:
-      - description: Todo Id
+      - description: Todo ID
         in: path
         name: id
         required: true
@@ -196,10 +174,6 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/dto.ErrorOutput'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/dto.ErrorOutput'
       summary: Delete a todo
       tags:
       - Todo
@@ -208,7 +182,7 @@ paths:
       - application/json
       description: Get todo by id
       parameters:
-      - description: Todo Id
+      - description: Todo ID
         in: path
         name: id
         required: true
@@ -228,10 +202,6 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/dto.ErrorOutput'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/dto.ErrorOutput'
       summary: Find a todo
       tags:
       - Todo
@@ -240,7 +210,7 @@ paths:
       - application/json
       description: update by json todo
       parameters:
-      - description: Todo Id
+      - description: Todo ID
         in: path
         name: id
         required: true
@@ -264,10 +234,6 @@ paths:
             $ref: '#/definitions/dto.ErrorOutput'
         "404":
           description: Not Found
-          schema:
-            $ref: '#/definitions/dto.ErrorOutput'
-        "500":
-          description: Internal Server Error
           schema:
             $ref: '#/definitions/dto.ErrorOutput'
       summary: Update a todo

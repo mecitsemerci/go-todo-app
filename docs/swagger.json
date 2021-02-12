@@ -2,9 +2,8 @@
     "swagger": "2.0",
     "info": {
         "description": "This is a sample todo restful api server.",
-        "title": "Todo Example API",
+        "title": "Todo API",
         "contact": {},
-        "license": {},
         "version": "1.0.0"
     },
     "host": "localhost:8080",
@@ -13,29 +12,6 @@
         "/api/health": {
             "get": {
                 "description": "Get api healthy status",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Health Check"
-                ],
-                "summary": "Check api status",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.HealthOutput"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/health/dependencies": {
-            "get": {
-                "description": "Get api healthy status with dependencies",
                 "consumes": [
                     "application/json"
                 ],
@@ -90,17 +66,9 @@
                         "schema": {
                             "$ref": "#/definitions/dto.ErrorOutput"
                         }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorOutput"
-                        }
                     }
                 }
-            }
-        },
-        "/api/v1/todo/": {
+            },
             "post": {
                 "description": "add by json todo",
                 "consumes": [
@@ -142,12 +110,6 @@
                         "schema": {
                             "$ref": "#/definitions/dto.ErrorOutput"
                         }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorOutput"
-                        }
                     }
                 }
             }
@@ -168,7 +130,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Todo Id",
+                        "description": "Todo ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -192,12 +154,6 @@
                         "schema": {
                             "$ref": "#/definitions/dto.ErrorOutput"
                         }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorOutput"
-                        }
                     }
                 }
             },
@@ -216,7 +172,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Todo Id",
+                        "description": "Todo ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -249,12 +205,6 @@
                         "schema": {
                             "$ref": "#/definitions/dto.ErrorOutput"
                         }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorOutput"
-                        }
                     }
                 }
             },
@@ -273,7 +223,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Todo Id",
+                        "description": "Todo ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -297,12 +247,6 @@
                         "schema": {
                             "$ref": "#/definitions/dto.ErrorOutput"
                         }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorOutput"
-                        }
                     }
                 }
             }
@@ -318,6 +262,9 @@
             "properties": {
                 "description": {
                     "type": "string"
+                },
+                "priority_level": {
+                    "type": "integer"
                 },
                 "title": {
                     "type": "string"
@@ -352,12 +299,6 @@
         "dto.HealthOutput": {
             "type": "object",
             "properties": {
-                "dependencies": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "boolean"
-                    }
-                },
                 "status": {
                     "type": "string",
                     "example": "healthy"
@@ -383,6 +324,10 @@
                     "type": "string",
                     "example": "5f68b3f08c111c96d1f8d9a3"
                 },
+                "priority_level": {
+                    "type": "integer",
+                    "example": 0
+                },
                 "title": {
                     "type": "string",
                     "example": "Shopping"
@@ -405,6 +350,9 @@
                 },
                 "description": {
                     "type": "string"
+                },
+                "priority_level": {
+                    "type": "integer"
                 },
                 "title": {
                     "type": "string"
