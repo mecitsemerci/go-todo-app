@@ -9,7 +9,7 @@
     "host": "localhost:8080",
     "basePath": "/",
     "paths": {
-        "/api/health": {
+        "/api/status": {
             "get": {
                 "description": "Get api healthy status",
                 "consumes": [
@@ -299,9 +299,13 @@
         "dto.HealthOutput": {
             "type": "object",
             "properties": {
+                "details": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
                 "status": {
                     "type": "string",
-                    "example": "healthy"
+                    "example": "ok"
                 }
             }
         },

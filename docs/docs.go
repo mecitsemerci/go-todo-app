@@ -24,7 +24,7 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/health": {
+        "/api/status": {
             "get": {
                 "description": "Get api healthy status",
                 "consumes": [
@@ -314,9 +314,13 @@ var doc = `{
         "dto.HealthOutput": {
             "type": "object",
             "properties": {
+                "details": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
                 "status": {
                     "type": "string",
-                    "example": "healthy"
+                    "example": "ok"
                 }
             }
         },
