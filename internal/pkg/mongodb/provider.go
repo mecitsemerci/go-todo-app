@@ -22,5 +22,5 @@ func ProvideMongoClient() *mongo.Client {
 }
 
 func ProvideTodoRepository(client *mongo.Client) interfaces.TodoRepository {
-	return NewTodoAdapter(client)
+	return NewTodoAdapter(client, config.MongoDbTodoDbName)
 }

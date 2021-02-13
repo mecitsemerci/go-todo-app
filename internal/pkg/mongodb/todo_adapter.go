@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/mecitsemerci/go-todo-app/internal/config"
 	"github.com/mecitsemerci/go-todo-app/internal/core/domain"
 	"github.com/mecitsemerci/go-todo-app/internal/core/domain/todo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -15,7 +14,10 @@ import (
 	"time"
 )
 
-const CollectionName = "todos"
+const (
+	CollectionName = "todos"
+	Timeout        = 5
+)
 
 var (
 	ErrNoItemsUpdated = errors.New("mongodb: no items have been updated")
@@ -27,15 +29,15 @@ type TodoAdapter struct {
 	collection *mongo.Collection
 }
 
-func NewTodoAdapter(client *mongo.Client) *TodoAdapter {
+func NewTodoAdapter(client *mongo.Client, dbName string) *TodoAdapter {
 	return &TodoAdapter{
 		client:     client,
-		collection: client.Database(config.MongoDbTodoDbName).Collection(CollectionName),
+		collection: client.Database(dbName).Collection(CollectionName),
 	}
 }
 
 func (repo *TodoAdapter) GetAll() ([]todo.Todo, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), Timeout*time.Second)
 	defer cancel()
 
 	findOptions := options.Find()
@@ -73,7 +75,7 @@ func (repo *TodoAdapter) GetAll() ([]todo.Todo, error) {
 }
 
 func (repo *TodoAdapter) GetById(id domain.ID) (*todo.Todo, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), Timeout*time.Second)
 	defer cancel()
 
 	var t Todo
@@ -96,7 +98,7 @@ func (repo *TodoAdapter) GetById(id domain.ID) (*todo.Todo, error) {
 }
 
 func (repo *TodoAdapter) Insert(t todo.Todo) (domain.ID, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), Timeout*time.Second)
 	defer cancel()
 
 	var todoItem Todo
@@ -125,7 +127,7 @@ func (repo *TodoAdapter) Insert(t todo.Todo) (domain.ID, error) {
 }
 
 func (repo *TodoAdapter) Update(todo todo.Todo) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), Timeout*time.Second)
 	defer cancel()
 
 	oid, err := primitive.ObjectIDFromHex(string(todo.ID))
@@ -141,8 +143,9 @@ func (repo *TodoAdapter) Update(todo todo.Todo) error {
 	document := bson.M{"$set": bson.M{
 		"title":       todo.Title,
 		"description": todo.Description,
+		"priority":    todo.Priority,
 		"completed":   todo.Completed,
-		"updated_at":  time.Now().UTC(),
+		"updated_at":  todo.UpdatedAt,
 	}}
 
 	//Update Item
@@ -160,7 +163,7 @@ func (repo *TodoAdapter) Update(todo todo.Todo) error {
 }
 
 func (repo *TodoAdapter) Delete(id domain.ID) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), Timeout*time.Second)
 	defer cancel()
 
 	oid, err := primitive.ObjectIDFromHex(string(id))

@@ -32,5 +32,7 @@ Application integration test folder.
 ### `web` (web ui)
 Web application specific components: static web assets, server side templates and SPAs.
 
-### `docs`
-open api (swagger) docs files. Swaggo generate automatically. 
+### `docs` (openapi docs)
+open api (swagger) docs files. Swaggo generates automatically. 
+
+    swag init -g ./cmd/api/main.go -o ./docs

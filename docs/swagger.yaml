@@ -30,8 +30,11 @@ definitions:
     type: object
   dto.HealthOutput:
     properties:
+      details:
+        additionalProperties: true
+        type: object
       status:
-        example: healthy
+        example: ok
         type: string
     type: object
   dto.TodoOutput:
@@ -79,7 +82,7 @@ info:
   title: Todo API
   version: 1.0.0
 paths:
-  /api/health:
+  /api/status:
     get:
       consumes:
       - application/json
