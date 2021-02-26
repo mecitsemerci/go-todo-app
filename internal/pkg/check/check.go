@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+//IsEmptyOrWhiteSpace checks string is "" or whitespace
 func IsEmptyOrWhiteSpace(str string) bool {
 	if IsEmpty(str) || len(strings.TrimSpace(str)) == 0 {
 		return true
@@ -13,6 +14,7 @@ func IsEmptyOrWhiteSpace(str string) bool {
 	return false
 }
 
+//IsEmpty checks object is zero or nil
 func IsEmpty(obj interface{}) bool {
 
 	// get nil case out of the way

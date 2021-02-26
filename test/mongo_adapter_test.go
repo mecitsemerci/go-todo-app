@@ -2,6 +2,11 @@ package test
 
 import (
 	"context"
+	"log"
+	"os"
+	"testing"
+	"time"
+
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/mecitsemerci/go-todo-app/internal/config"
 	"github.com/mecitsemerci/go-todo-app/internal/core/domain"
@@ -11,15 +16,11 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
-	"os"
-	"testing"
-	"time"
 )
 
 const (
-	DatabaseName = "TestTodoDb"
-	Timeout      = 5
+	dbname  = "TestTodoDb"
+	timeout = 5
 )
 
 var (
@@ -30,21 +31,21 @@ var (
 
 //region TestSetup
 func setup() {
-	ctx, cancel := context.WithTimeout(context.Background(), Timeout*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout*time.Second)
 	defer cancel()
-	if client, err := mongo.Connect(ctx, options.Client().ApplyURI(config.MongoDbUrl)); err != nil {
+	if client, err := mongo.Connect(ctx, options.Client().ApplyURI(config.MongoURL)); err != nil {
 		log.Fatalf("provide mongodb: %s", err.Error())
 	} else {
 		mongoClient = client
 	}
-	todoAdapter = mongodb.NewTodoAdapter(mongoClient, DatabaseName)
-	idGenerator = mongodb.NewIdGenerator()
+	todoAdapter = mongodb.NewTodoAdapter(mongoClient, dbname)
+	idGenerator = mongodb.NewIDGenerator()
 }
 
 func shutdown() {
-	ctx, cancel := context.WithTimeout(context.Background(), Timeout*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout*time.Second)
 	defer cancel()
-	_ = mongoClient.Database(DatabaseName).Drop(ctx)
+	_ = mongoClient.Database(dbname).Drop(ctx)
 	if err := mongoClient.Disconnect(ctx); err != nil {
 		log.Println(err.Error())
 	}
@@ -58,7 +59,7 @@ func TestMain(m *testing.M) {
 }
 
 func clear() {
-	_ = mongoClient.Database(DatabaseName).Collection(mongodb.CollectionName).Drop(context.Background())
+	_ = mongoClient.Database(dbname).Collection(mongodb.CollectionName).Drop(context.Background())
 }
 
 func createFakeTodo() todo.Todo {
@@ -80,7 +81,7 @@ func Test_GetAll_Should_Return_Empty_Array_When_There_Is_No_Items(t *testing.T) 
 	clear()
 
 	//When
-	items, err := todoAdapter.GetAll()
+	items, err := todoAdapter.GetAll(context.TODO())
 
 	//Then
 	assert.Nil(t, err)
@@ -91,12 +92,12 @@ func Test_GetAll_Should_Return_A_Item_When_There_Is_A_Item(t *testing.T) {
 	//Given
 	clear()
 	item := createFakeTodo()
-	id, err := todoAdapter.Insert(item)
+	id, err := todoAdapter.Insert(context.TODO(), item)
 	assert.Nil(t, err)
 	assert.NotEmpty(t, id)
 
 	//When
-	items, err := todoAdapter.GetAll()
+	items, err := todoAdapter.GetAll(context.TODO())
 
 	//Then
 	assert.Nil(t, err)
@@ -118,13 +119,13 @@ func Test_GetAll_Should_Return_All_Items(t *testing.T) {
 	count := 10
 	for i := 0; i < count; i++ {
 		item := createFakeTodo()
-		id, err := todoAdapter.Insert(item)
+		id, err := todoAdapter.Insert(context.TODO(), item)
 		assert.Nil(t, err)
 		assert.NotEmpty(t, id)
 	}
 
 	//When
-	items, err := todoAdapter.GetAll()
+	items, err := todoAdapter.GetAll(context.TODO())
 
 	//Then
 	assert.Nil(t, err)
@@ -136,12 +137,12 @@ func Test_GetById_Should_Return_Item_When_Given_Item_ID(t *testing.T) {
 	//Given
 	clear()
 	fakeItem := createFakeTodo()
-	id, err := todoAdapter.Insert(fakeItem)
+	id, err := todoAdapter.Insert(context.TODO(), fakeItem)
 	assert.Nil(t, err)
 	assert.NotEmpty(t, id)
 
 	//When
-	item, err := todoAdapter.GetById(id)
+	item, err := todoAdapter.GetByID(context.TODO(), id)
 
 	//Then
 	assert.Nil(t, err)
@@ -159,22 +160,22 @@ func Test_GetById_Should_Return_Error_When_Given_Item_ID_Empty(t *testing.T) {
 	//Given
 
 	//When
-	item, err := todoAdapter.GetById(domain.NilID)
+	item, err := todoAdapter.GetByID(context.TODO(), domain.ZeroID)
 
 	//Then
 	assert.NotNil(t, err)
-	assert.Nil(t, item)
+	assert.Empty(t, item)
 }
 
 func Test_GetById_Should_Return_Error_When_Given_Item_ID_Not_Exist(t *testing.T) {
 	//Given
 
 	//When
-	item, err := todoAdapter.GetById(idGenerator.NewID())
+	item, err := todoAdapter.GetByID(context.TODO(), idGenerator.NewID())
 
 	//Then
 	assert.NotNil(t, err)
-	assert.Nil(t, item)
+	assert.Empty(t, item)
 }
 
 func Test_Insert_Should_Return_ObjectId_When_Item_Created(t *testing.T) {
@@ -182,7 +183,7 @@ func Test_Insert_Should_Return_ObjectId_When_Item_Created(t *testing.T) {
 	todoItem := createFakeTodo()
 
 	//When
-	id, err := todoAdapter.Insert(todoItem)
+	id, err := todoAdapter.Insert(context.TODO(), todoItem)
 
 	//Then
 	assert.Nil(t, err)
@@ -192,10 +193,10 @@ func Test_Insert_Should_Return_ObjectId_When_Item_Created(t *testing.T) {
 func Test_Insert_Should_Return_Error_When_No_Given_Item_ID(t *testing.T) {
 	//Given
 	todoItem := createFakeTodo()
-	todoItem.ID = domain.NilID
+	todoItem.ID = domain.ZeroID
 
 	//When
-	id, err := todoAdapter.Insert(todoItem)
+	id, err := todoAdapter.Insert(context.TODO(), todoItem)
 
 	//Then
 	assert.NotNil(t, err)
@@ -205,16 +206,16 @@ func Test_Insert_Should_Return_Error_When_No_Given_Item_ID(t *testing.T) {
 func Test_Insert_Should_Return_Error_When_Db_Connection_Not_Exist(t *testing.T) {
 	//Given
 	todoItem := createFakeTodo()
-	ctx, cancel := context.WithTimeout(context.Background(), Timeout*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout*time.Second)
 	defer cancel()
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(config.MongoDbUrl));
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(config.MongoURL))
 	assert.Nil(t, err)
-	adapter := mongodb.NewTodoAdapter(client,DatabaseName)
+	adapter := mongodb.NewTodoAdapter(client, dbname)
 	err = client.Disconnect(ctx)
 	assert.Nil(t, err)
 
 	//When
-	id, err := adapter.Insert(todoItem)
+	id, err := adapter.Insert(context.TODO(), todoItem)
 
 	//Then
 	assert.NotNil(t, err)
@@ -225,13 +226,13 @@ func Test_Update_Should_Return_No_Error_When_Item_Updated(t *testing.T) {
 	//Given
 	clear()
 	todoItem := createFakeTodo()
-	id, err := todoAdapter.Insert(todoItem)
+	id, err := todoAdapter.Insert(context.TODO(), todoItem)
 	assert.Nil(t, err)
 	assert.NotEmpty(t, id)
 
 	//When
 	todoItem.Description = "Updated"
-	err = todoAdapter.Update(todoItem)
+	err = todoAdapter.Update(context.TODO(), todoItem)
 
 	//Then
 	assert.Nil(t, err)
@@ -243,7 +244,7 @@ func Test_Update_Should_Return_Error_When_Item_Not_Exist(t *testing.T) {
 
 	//When
 	todoItem.Description = "Updated"
-	err := todoAdapter.Update(todoItem)
+	err := todoAdapter.Update(context.TODO(), todoItem)
 
 	//Then
 	assert.NotNil(t, err)

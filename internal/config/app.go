@@ -1,14 +1,22 @@
 package config
 
 import (
-	"github.com/joho/godotenv"
 	"log"
 	"os"
+	"strconv"
+
+	"github.com/joho/godotenv"
 )
 
 var (
-	MongoDbUrl        string
-	MongoDbTodoDbName string
+	// MongoURL is MongoDB connection string
+	MongoURL string
+
+	// MongoTodoDbName is MongoDB database name
+	MongoTodoDbName string
+
+	// DBTimeout is MongoDB connection timeout duration (second)
+	DBTimeout int
 )
 
 func init() {
@@ -16,8 +24,11 @@ func init() {
 	if err != nil {
 		log.Println("Error loading .env file")
 	}
-	MongoDbUrl = getEnvWithDefault("MONGODB_URL", "mongodb://127.0.0.1:27017")
-	MongoDbTodoDbName = getEnvWithDefault("MONGODB_TODO_DB", "todos")
+	MongoURL = getEnvWithDefault("MONGO_URL", "mongodb://127.0.0.1:27017")
+	MongoTodoDbName = getEnvWithDefault("MONGO_TODO_DB", "todos")
+	if t, err := strconv.Atoi(getEnvWithDefault("DB_TIMEOUT", "10")); err != nil {
+		DBTimeout = t
+	}
 }
 
 func getEnvWithDefault(key string, defaultValue string) string {

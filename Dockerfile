@@ -1,5 +1,5 @@
 # Dockerfile References: https://docs.docker.com/engine/reference/builder/
-FROM golang:1.15.3-alpine
+FROM golang:1.16.0-alpine as builder
 
 # The latest alpine images don't have some tools like (`git` and `bash`).
 # Adding git, bash and openssh to the image
@@ -20,10 +20,14 @@ RUN go mod download
 RUN go get github.com/swaggo/swag/cmd/swag && swag init -g ./cmd/api/main.go -o ./docs
 
 # Build the Go app
-RUN go build -o ./server ./cmd/api
+RUN go build -o ./todoserver ./cmd/api
+
+FROM golang:1.16.0-alpine
+
+COPY --from=builder /app/todoserver /go/bin/todoserver
 
 # Expose port 8080 to the outside world
 EXPOSE 8080
 
 # Run the executable
-CMD ["./server"]
+CMD ["todoserver"]

@@ -1,10 +1,12 @@
 package domain
 
+// ID generic domain identifier
 type ID string
 
-var NilID ID
+// ZeroID null domain ID
+var ZeroID ID
 
-func (id *ID) String() string  {
+//String returns ID's string value
+func (id *ID) String() string {
 	return string(*id)
 }
-

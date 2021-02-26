@@ -1,6 +1,10 @@
-package controller
+package handler
 
 import (
+	"net/http"
+
+	"github.com/opentracing/opentracing-go"
+
 	"github.com/gin-gonic/gin"
 	"github.com/mecitsemerci/go-todo-app/internal/api/dto"
 	"github.com/mecitsemerci/go-todo-app/internal/api/httperror"
@@ -8,23 +12,25 @@ import (
 	"github.com/mecitsemerci/go-todo-app/internal/core/interfaces"
 	"github.com/mecitsemerci/go-todo-app/internal/pkg/check"
 	"github.com/mecitsemerci/go-todo-app/internal/pkg/validator"
-	"net/http"
 )
 
-type TodoController struct {
+//TodoHandler handles all todo operations
+type TodoHandler struct {
 	TodoService interfaces.TodoService
 }
 
-func NewTodoController(todoService interfaces.TodoService) TodoController {
-	return TodoController{TodoService: todoService}
+//NewTodoHandler returns new TodoHandler instance
+func NewTodoHandler(todoService interfaces.TodoService) TodoHandler {
+	return TodoHandler{TodoService: todoService}
 }
 
-func (controller *TodoController) Register(apiRouteGroup *gin.RouterGroup) {
+//Register maps HTTP operations with methods according to the router group
+func (controller *TodoHandler) Register(apiRouteGroup *gin.RouterGroup) {
 	router := apiRouteGroup.Group("/todo")
 	{
-		router.GET("/", controller.GetAll)
+		router.GET("", controller.GetAll)
 		router.GET("/:id", controller.Find)
-		router.POST("/", controller.Create)
+		router.POST("", controller.Create)
 		router.PUT("/:id", controller.Update)
 		router.DELETE("/:id", controller.Delete)
 	}
@@ -40,8 +46,12 @@ func (controller *TodoController) Register(apiRouteGroup *gin.RouterGroup) {
 // @Failure 400 {object} dto.ErrorOutput
 // @Failure 422 {object} dto.ErrorOutput
 // @Router /api/v1/todo [get]
-func (controller *TodoController) GetAll(ctx *gin.Context) {
-	todoList, err := controller.TodoService.GetAll()
+func (controller *TodoHandler) GetAll(ctx *gin.Context) {
+	span := opentracing.GlobalTracer().StartSpan("TodoHandler-GetAll")
+	spanContext := opentracing.ContextWithSpan(ctx.Request.Context(), span)
+	defer span.Finish()
+
+	todoList, err := controller.TodoService.GetAll(spanContext)
 	if err != nil {
 		httperror.NewError(ctx, http.StatusUnprocessableEntity, "Something went wrong!", err)
 		return
@@ -65,15 +75,19 @@ func (controller *TodoController) GetAll(ctx *gin.Context) {
 // @Failure 400 {object} dto.ErrorOutput
 // @Failure 404 {object} dto.ErrorOutput
 // @Router /api/v1/todo/{id} [get]
-func (controller *TodoController) Find(ctx *gin.Context) {
-	todoId := ctx.Param("id")
+func (controller *TodoHandler) Find(ctx *gin.Context) {
+	span := opentracing.GlobalTracer().StartSpan("TodoHandler-Find")
+	spanContext := opentracing.ContextWithSpan(ctx.Request.Context(), span)
+	defer span.Finish()
 
-	if check.IsEmptyOrWhiteSpace(todoId) {
+	todoID := ctx.Param("id")
+
+	if check.IsEmptyOrWhiteSpace(todoID) {
 		httperror.NewError(ctx, http.StatusBadRequest, "ID is empty.", nil)
 		return
 	}
 
-	todoModel, err := controller.TodoService.Find(domain.ID(todoId))
+	todoModel, err := controller.TodoService.Find(spanContext, domain.ID(todoID))
 
 	if err != nil {
 		httperror.NewError(ctx, http.StatusUnprocessableEntity, "Item is not exist.", err)
@@ -82,7 +96,7 @@ func (controller *TodoController) Find(ctx *gin.Context) {
 
 	todoOutput := dto.TodoOutput{}
 
-	ctx.JSON(http.StatusOK, todoOutput.FromModel(*todoModel))
+	ctx.JSON(http.StatusOK, todoOutput.FromModel(todoModel))
 }
 
 // Create Todo godoc
@@ -96,7 +110,11 @@ func (controller *TodoController) Find(ctx *gin.Context) {
 // @Failure 400 {object} dto.ErrorOutput
 // @Failure 422 {object} dto.ErrorOutput
 // @Router /api/v1/todo [post]
-func (controller *TodoController) Create(ctx *gin.Context) {
+func (controller *TodoHandler) Create(ctx *gin.Context) {
+	span := opentracing.GlobalTracer().StartSpan("TodoHandler-Create")
+	spanContext := opentracing.ContextWithSpan(ctx.Request.Context(), span)
+	defer span.Finish()
+
 	var createTodoInput dto.CreateTodoInput
 
 	if err := ctx.ShouldBindJSON(&createTodoInput); err != nil {
@@ -109,7 +127,7 @@ func (controller *TodoController) Create(ctx *gin.Context) {
 		return
 	}
 
-	todoId, err := controller.TodoService.Create(createTodoInput.ToModel())
+	todoID, err := controller.TodoService.Create(spanContext, createTodoInput.ToModel())
 
 	if err != nil {
 		httperror.NewError(ctx, http.StatusUnprocessableEntity, "The item failed to create.", err)
@@ -117,7 +135,7 @@ func (controller *TodoController) Create(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, dto.CreateTodoOutput{
-		TodoId: todoId.String(),
+		TodoID: todoID.String(),
 	})
 
 }
@@ -134,10 +152,14 @@ func (controller *TodoController) Create(ctx *gin.Context) {
 // @Failure 400 {object} dto.ErrorOutput
 // @Failure 404 {object} dto.ErrorOutput
 // @Router /api/v1/todo/{id} [put]
-func (controller *TodoController) Update(ctx *gin.Context) {
-	todoId := ctx.Param("id")
+func (controller *TodoHandler) Update(ctx *gin.Context) {
+	span := opentracing.GlobalTracer().StartSpan("TodoHandler-Create")
+	spanContext := opentracing.ContextWithSpan(ctx.Request.Context(), span)
+	defer span.Finish()
 
-	if check.IsEmptyOrWhiteSpace(todoId) {
+	todoID := ctx.Param("id")
+
+	if check.IsEmptyOrWhiteSpace(todoID) {
 		httperror.NewError(ctx, http.StatusBadRequest, "ID is invalid.", nil)
 		return
 	}
@@ -154,9 +176,9 @@ func (controller *TodoController) Update(ctx *gin.Context) {
 		return
 	}
 
-	model := updateTodoInput.ToModel(todoId)
+	model := updateTodoInput.ToModel(todoID)
 
-	err := controller.TodoService.Update(*model)
+	err := controller.TodoService.Update(spanContext, model)
 
 	if err != nil {
 		httperror.NewError(ctx, http.StatusNotFound, "The item failed to update.", err)
@@ -177,15 +199,19 @@ func (controller *TodoController) Update(ctx *gin.Context) {
 // @Failure 400 {object} dto.ErrorOutput
 // @Failure 404 {object} dto.ErrorOutput
 // @Router /api/v1/todo/{id} [delete]
-func (controller *TodoController) Delete(ctx *gin.Context) {
-	todoId := ctx.Param("id")
+func (controller *TodoHandler) Delete(ctx *gin.Context) {
+	span := opentracing.GlobalTracer().StartSpan("TodoHandler-Create")
+	spanContext := opentracing.ContextWithSpan(ctx.Request.Context(), span)
+	defer span.Finish()
 
-	if check.IsEmptyOrWhiteSpace(todoId) {
+	todoID := ctx.Param("id")
+
+	if check.IsEmptyOrWhiteSpace(todoID) {
 		httperror.NewError(ctx, http.StatusBadRequest, "ID is empty.", nil)
 		return
 	}
 
-	err := controller.TodoService.Delete(domain.ID(todoId))
+	err := controller.TodoService.Delete(spanContext, domain.ID(todoID))
 
 	if err != nil {
 		httperror.NewError(ctx, http.StatusNotFound, "The item failed to delete.", err)

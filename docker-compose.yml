@@ -8,16 +8,28 @@ services:
       context: . # Use an image built from the specified dockerfile in the current directory.
       dockerfile: Dockerfile
     environment:
-      - MONGODB_URL=mongodb://mongo:27017
-      - MONGODB_TODO_DB=TodoDb
+      - MONGO_URL=mongodb://mongo:27017
+      - MONGO_TODO_DB=TodoDb
+      - JAEGER_AGENT_HOST=jaeger
+      - JAEGER_AGENT_PORT=6831
+      - JAEGER_SAMPLER_PARAM=1
+      - JAEGER_SAMPLER_TYPE=probabilistic
+      - JAEGER_SERVICE_NAME=go-todo-app
     ports:
       - "8080:8080" # Forward the exposed port 8080 on the container to port 8080 on the host machine
     restart: unless-stopped
     depends_on:
       - mongo
+      - jaeger
   mongo:
     image: mongo:3
     ports:
       - '27017:27017'
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "6831:6831/udp"
+      - "5775:5775/udp"
+      - "16686:16686"
 
 
