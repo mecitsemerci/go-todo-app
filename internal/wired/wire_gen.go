@@ -7,28 +7,28 @@ package wired
 
 import (
 	"github.com/google/wire"
-	"github.com/mecitsemerci/go-todo-app/internal/api/controller"
+	"github.com/mecitsemerci/go-todo-app/internal/api/handler"
 	"github.com/mecitsemerci/go-todo-app/internal/core/services"
 	"github.com/mecitsemerci/go-todo-app/internal/pkg/mongodb"
 )
 
 // Injectors from wired.go:
 
-func InitializeTodoController() controller.TodoController {
+func InitializeTodoController() handler.TodoHandler {
 	client := mongodb.ProvideMongoClient()
 	todoRepository := mongodb.ProvideTodoRepository(client)
-	idGenerator := mongodb.ProvideIdGenerator()
+	idGenerator := mongodb.ProvideIDGenerator()
 	todoService := services.ProvideTodoService(todoRepository, idGenerator)
-	todoController := controller.ProvideTodoController(todoService)
-	return todoController
+	todoHandler := handler.ProvideTodoHandler(todoService)
+	return todoHandler
 }
 
 // wired.go:
 
 var TodoRepositorySet = wire.NewSet(mongodb.ProvideTodoRepository, mongodb.ProvideMongoClient)
 
-var TodoServiceSet = wire.NewSet(services.ProvideTodoService, TodoRepositorySet, mongodb.ProvideIdGenerator)
+var TodoServiceSet = wire.NewSet(services.ProvideTodoService, TodoRepositorySet, mongodb.ProvideIDGenerator)
 
-func InitializeHealthController() controller.HealthController {
-	return controller.HealthController{}
+func InitializeHealthController() handler.HealthController {
+	return handler.HealthController{}
 }

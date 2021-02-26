@@ -1,13 +1,15 @@
 package mongodb
 
 import (
+	"time"
+
 	"github.com/mecitsemerci/go-todo-app/internal/core/domain"
 	"github.com/mecitsemerci/go-todo-app/internal/core/domain/todo"
 	"github.com/mecitsemerci/go-todo-app/internal/core/enum"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"time"
 )
 
+//Todo entity of mongodb
 type Todo struct {
 	ID          primitive.ObjectID `bson:"_id"`
 	Title       string             `bson:"title"`
@@ -18,6 +20,7 @@ type Todo struct {
 	UpdatedAt   time.Time          `bson:"updated_at"`
 }
 
+//FromModel mapper from todo model to todo entity
 func (e *Todo) FromModel(m *todo.Todo) error {
 	oid, err := primitive.ObjectIDFromHex(string(m.ID))
 	if err != nil {
@@ -33,8 +36,9 @@ func (e *Todo) FromModel(m *todo.Todo) error {
 	return nil
 }
 
-func (e *Todo) ToModel() *todo.Todo {
-	return &todo.Todo{
+//ToModel mapper from todo entity to todo model
+func (e *Todo) ToModel() todo.Todo {
+	return todo.Todo{
 		ID:          domain.ID(e.ID.Hex()),
 		Title:       e.Title,
 		Description: e.Description,

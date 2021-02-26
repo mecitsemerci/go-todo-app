@@ -1,12 +1,14 @@
 package dto
 
 import (
+	"time"
+
 	"github.com/mecitsemerci/go-todo-app/internal/core/domain"
 	"github.com/mecitsemerci/go-todo-app/internal/core/domain/todo"
 	"github.com/mecitsemerci/go-todo-app/internal/core/enum"
-	"time"
 )
 
+// TodoOutput is the result output dto of the todo item
 type TodoOutput struct {
 	ID          string             `json:"id" example:"5f68b3f08c111c96d1f8d9a3"`
 	Title       string             `json:"title" example:"Shopping"`
@@ -17,6 +19,7 @@ type TodoOutput struct {
 	UpdatedAt   time.Time          `json:"updated_at" example:"2020-07-30T07:32:32.71472Z"`
 }
 
+// FromModel is a mapping from Todo Model to TodoOutput
 func (dto *TodoOutput) FromModel(todo todo.Todo) TodoOutput {
 	dto.ID = todo.ID.String()
 	dto.Title = todo.Title
@@ -28,13 +31,14 @@ func (dto *TodoOutput) FromModel(todo todo.Todo) TodoOutput {
 	return *dto
 }
 
-// region CREATE
+//CreateTodoInput is an input dto for a creation todo item
 type CreateTodoInput struct {
 	Title       string             `json:"title" binding:"required"`
 	Description string             `json:"description" binding:"required"`
 	Priority    enum.PriorityLevel `json:"priority_level,omitempty"`
 }
 
+//ToModel is mapping from CreateTodoInput to Todo Model
 func (dto *CreateTodoInput) ToModel() todo.Todo {
 	return todo.Todo{
 		Title:       dto.Title,
@@ -43,13 +47,12 @@ func (dto *CreateTodoInput) ToModel() todo.Todo {
 	}
 }
 
+//CreateTodoOutput is the result output dto of the created Todo
 type CreateTodoOutput struct {
-	TodoId string `json:"todo_id"`
+	TodoID string `json:"todo_id"`
 }
 
-//endregion
-
-//region UPDATE
+//UpdateTodoInput is an update input dto for given todo id
 type UpdateTodoInput struct {
 	Title       string             `json:"title,omitempty" binding:"required"`
 	Description string             `json:"description,omitempty" binding:"required"`
@@ -57,8 +60,9 @@ type UpdateTodoInput struct {
 	Completed   bool               `json:"completed,omitempty"`
 }
 
-func (dto *UpdateTodoInput) ToModel(id string) *todo.Todo {
-	return &todo.Todo{
+//ToModel is mapping from UpdateTodoInput to Todo Model
+func (dto *UpdateTodoInput) ToModel(id string) todo.Todo {
+	return todo.Todo{
 		ID:          domain.ID(id),
 		Title:       dto.Title,
 		Priority:    dto.Priority,

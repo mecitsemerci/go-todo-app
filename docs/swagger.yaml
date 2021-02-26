@@ -86,7 +86,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get api healthy status
+      description: Get api pulse status
       produces:
       - application/json
       responses:

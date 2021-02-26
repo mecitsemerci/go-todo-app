@@ -2,12 +2,19 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/mecitsemerci/go-todo-app/internal/pkg/tracer"
 	"github.com/mecitsemerci/go-todo-app/internal/wired"
-	"github.com/swaggo/gin-swagger"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 )
 
-func AddControllers(apiRouteGroup *gin.RouterGroup) {
+//AppEngine application runtime
+type AppEngine struct {
+	Close func() error
+	Run   func() error
+}
+
+func registerHandlers(apiRouteGroup *gin.RouterGroup) {
 
 	groupV1 := apiRouteGroup.Group("/v1")
 	{
@@ -20,14 +27,25 @@ func AddControllers(apiRouteGroup *gin.RouterGroup) {
 
 }
 
-func Setup() *gin.Engine {
+//Setup returns AppEngine
+func Setup() *AppEngine {
 	router := gin.Default()
 	apiRouteGroup := router.Group("/api")
 
-	AddControllers(apiRouteGroup)
+	registerHandlers(apiRouteGroup)
+
+	//Opentracing configuration
+	traceCloser := tracer.Init()
 
 	//Swagger Configuration
 	router.GET("/swagger/*any", ginSwagger.DisablingWrapHandler(swaggerFiles.Handler, ""))
 
-	return router
+	return &AppEngine{
+		Close: func() error {
+			return traceCloser.Close()
+		},
+		Run: func() error {
+			return router.Run()
+		},
+	}
 }

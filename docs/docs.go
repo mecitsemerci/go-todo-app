@@ -26,7 +26,7 @@ var doc = `{
     "paths": {
         "/api/status": {
             "get": {
-                "description": "Get api healthy status",
+                "description": "Get api pulse status",
                 "consumes": [
                     "application/json"
                 ],

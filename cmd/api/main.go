@@ -1,10 +1,11 @@
 package main
 
 import (
-	"fmt"
+	"log"
+	"os"
+
 	_ "github.com/mecitsemerci/go-todo-app/docs"
 	"github.com/mecitsemerci/go-todo-app/internal/api"
-	"os"
 )
 
 // @title Todo API
@@ -13,10 +14,11 @@ import (
 // @host localhost:8080
 // @BasePath /
 func main() {
+	engine := api.Setup()
 
-	// Run app
-	if err := api.Setup().Run(); err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "%v", err)
+	if err := engine.Run(); err != nil {
+		log.Printf("%s", err.Error())
 		os.Exit(1)
 	}
+	defer engine.Close()
 }

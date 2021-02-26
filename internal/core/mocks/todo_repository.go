@@ -1,35 +1,48 @@
 package mocks
 
 import (
+	"context"
+
 	"github.com/mecitsemerci/go-todo-app/internal/core/domain"
 	"github.com/mecitsemerci/go-todo-app/internal/core/domain/todo"
 )
 
+//MockTodoRepository is mock TodoRepository
 type MockTodoRepository struct {
-	MockGetAll  func() ([]todo.Todo, error)
-	MockGetById func(id domain.ID) (*todo.Todo, error)
-	MockInsert  func(todo todo.Todo) (domain.ID, error)
-	MockUpdate  func(todo todo.Todo) error
-	MockDelete  func(id domain.ID) error
+	MockGetAll  func(ctx context.Context) ([]todo.Todo, error)
+	MockGetByID func(ctx context.Context, id domain.ID) (todo.Todo, error)
+	MockInsert  func(ctx context.Context, todo todo.Todo) (domain.ID, error)
+	MockUpdate  func(ctx context.Context, todo todo.Todo) error
+	MockDelete  func(ctx context.Context, id domain.ID) error
+	MockClose   func(ctx context.Context) error
 }
 
-func (m *MockTodoRepository) GetAll() ([]todo.Todo, error) {
-	return m.MockGetAll()
+// GetAll mock
+func (m *MockTodoRepository) GetAll(ctx context.Context) ([]todo.Todo, error) {
+	return m.MockGetAll(ctx)
 }
 
-func (m *MockTodoRepository) GetById(id domain.ID) (*todo.Todo, error) {
-	return m.MockGetById(id)
+// GetByID mock
+func (m *MockTodoRepository) GetByID(ctx context.Context, id domain.ID) (todo.Todo, error) {
+	return m.MockGetByID(ctx, id)
 }
 
-func (m *MockTodoRepository) Insert(todo todo.Todo) (domain.ID, error) {
-	return m.MockInsert(todo)
+// Insert mock
+func (m *MockTodoRepository) Insert(ctx context.Context, todo todo.Todo) (domain.ID, error) {
+	return m.MockInsert(ctx, todo)
 }
 
-func (m *MockTodoRepository) Update(todo todo.Todo) error {
-	return m.MockUpdate(todo)
+// Update mock
+func (m *MockTodoRepository) Update(ctx context.Context, todo todo.Todo) error {
+	return m.MockUpdate(ctx, todo)
 }
 
-func (m *MockTodoRepository) Delete(id domain.ID) error {
-	return m.MockDelete(id)
+// Delete mock
+func (m *MockTodoRepository) Delete(ctx context.Context, id domain.ID) error {
+	return m.MockDelete(ctx, id)
 }
 
+// Close mock
+func (m *MockTodoRepository) Close(ctx context.Context) error {
+	return m.MockClose(ctx)
+}

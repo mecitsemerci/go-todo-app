@@ -5,6 +5,7 @@ import (
 	"github.com/mecitsemerci/go-todo-app/internal/api/dto"
 )
 
+//NewError populate error output dto according to given error information
 func NewError(ctx *gin.Context, status int, message string, err error) {
 	output := dto.ErrorOutput{
 		Code:    status,
@@ -13,22 +14,5 @@ func NewError(ctx *gin.Context, status int, message string, err error) {
 	if err != nil {
 		output.Details = []string{err.Error()}
 	}
-	ctx.JSON(status, output)
-}
-
-func NewErrors(ctx *gin.Context, status int, message string, errorList []error) {
-
-	output := dto.ErrorOutput{
-		Code:    status,
-		Message: message,
-	}
-	if len(errorList) > 0 {
-		var errorMessages []string
-		for _, err := range errorList {
-			errorMessages = append(errorMessages, err.Error())
-		}
-		output.Details = errorMessages
-	}
-
 	ctx.JSON(status, output)
 }

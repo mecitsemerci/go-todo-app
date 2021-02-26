@@ -1,11 +1,13 @@
 package todo
 
 import (
+	"time"
+
 	"github.com/mecitsemerci/go-todo-app/internal/core/domain"
 	"github.com/mecitsemerci/go-todo-app/internal/core/enum"
-	"time"
 )
 
+//Todo represents information
 type Todo struct {
 	ID          domain.ID
 	Title       string
@@ -16,3 +18,5 @@ type Todo struct {
 	UpdatedAt   time.Time
 }
 
+// DefaultTodo is Default Todo
+var DefaultTodo Todo
