@@ -12,11 +12,9 @@ import (
 var TodoRepositorySet = wire.NewSet(mongodb.ProvideTodoRepository, mongodb.ProvideMongoClient)
 var TodoServiceSet = wire.NewSet(services.ProvideTodoService, TodoRepositorySet, mongodb.ProvideIDGenerator)
 
-func InitializeTodoController() handler.TodoHandler {
-
+func InitializeTodoController() (handler.TodoHandler, error) {
 	wire.Build(handler.ProvideTodoHandler, TodoServiceSet)
-
-	return handler.TodoHandler{}
+	return handler.TodoHandler{}, nil
 }
 
 func InitializeHealthController() handler.HealthController {

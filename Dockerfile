@@ -11,6 +11,7 @@ RUN mkdir /app
 
 # Set the Current Working Directory inside the container
 WORKDIR /app
+
 ADD . /app
 
 # Download all dependancies. Dependencies will be cached if the go.mod and go.sum files are not changed
@@ -19,15 +20,15 @@ RUN go mod download
 # Generate Swagger document
 RUN go get github.com/swaggo/swag/cmd/swag && swag init -g ./cmd/api/main.go -o ./docs
 
-# Build the Go app
-RUN go build -o ./todoserver ./cmd/api
+# Build the Go api
+RUN go build -o ./todoapi ./cmd/api
 
 FROM golang:1.16.0-alpine
 
-COPY --from=builder /app/todoserver /go/bin/todoserver
+COPY --from=builder /app/todoapi /go/bin/todoapi
 
 # Expose port 8080 to the outside world
 EXPOSE 8080
 
 # Run the executable
-CMD ["todoserver"]
+CMD ["todoapi"]

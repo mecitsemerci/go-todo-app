@@ -16,18 +16,17 @@ func ProvideIDGenerator() interfaces.IDGenerator {
 }
 
 //ProvideMongoClient provides mongo client
-func ProvideMongoClient() *mongo.Client {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(config.DBTimeout)*time.Second)
-	defer cancel()
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(config.MongoURL))
-	if err != nil {
-		panic(err)
-		//log.Printf("provide mongodb: %s", err.Error())
-	}
-	return client
+func ProvideMongoClient() (*mongo.Client, error) {
+	//Set Options
+	opts := options.Client().ApplyURI(config.MongoURL)
+	maxPoolSize := config.MongoMaxPoolSize
+	connTimeout := time.Duration(config.MongoConnectionTimeout) * time.Second
+	opts.MaxPoolSize = &maxPoolSize
+	opts.ConnectTimeout = &connTimeout
+	return mongo.Connect(context.Background(), opts)
 }
 
 //ProvideTodoRepository provides mongodb adapter
-func ProvideTodoRepository(client *mongo.Client) interfaces.TodoRepository {
+func ProvideTodoRepository(client *mongo.Client, ) interfaces.TodoRepository {
 	return NewTodoAdapter(client, config.MongoTodoDbName)
 }

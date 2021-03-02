@@ -15,8 +15,11 @@ var (
 	// MongoTodoDbName is MongoDB database name
 	MongoTodoDbName string
 
-	// DBTimeout is MongoDB connection timeout duration (second)
-	DBTimeout int
+	// MongoConnectionTimeout is MongoDB connection timeout duration (second)
+	MongoConnectionTimeout int
+
+	// MongoMaxPoolSize max connection pool size
+	MongoMaxPoolSize uint64
 )
 
 func init() {
@@ -26,8 +29,17 @@ func init() {
 	}
 	MongoURL = getEnvWithDefault("MONGO_URL", "mongodb://127.0.0.1:27017")
 	MongoTodoDbName = getEnvWithDefault("MONGO_TODO_DB", "todos")
-	if t, err := strconv.Atoi(getEnvWithDefault("DB_TIMEOUT", "10")); err != nil {
-		DBTimeout = t
+
+	if val, err := strconv.Atoi(getEnvWithDefault("MONGO_CONNECTION_TIMEOUT", "10")); err != nil {
+		MongoConnectionTimeout = 10
+	} else {
+		MongoConnectionTimeout = val
+	}
+
+	if val, err := strconv.ParseUint(getEnvWithDefault("MONGO_CONNECTION_TIMEOUT", "50"), 10, 64); err != nil {
+		MongoMaxPoolSize = 10
+	} else {
+		MongoMaxPoolSize = val
 	}
 }
 

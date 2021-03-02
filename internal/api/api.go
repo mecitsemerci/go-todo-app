@@ -8,31 +8,40 @@ import (
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 )
 
-//AppEngine application runtime
-type AppEngine struct {
+//App application runtime
+type App struct {
 	Close func() error
-	Run   func() error
+	Start func() error
 }
 
-func registerHandlers(apiRouteGroup *gin.RouterGroup) {
+func registerHandlers(apiRouteGroup *gin.RouterGroup) error {
 
 	groupV1 := apiRouteGroup.Group("/v1")
 	{
-		todoController := wired.InitializeTodoController()
+		todoController, err := wired.InitializeTodoController()
+		if err != nil {
+			return err
+		}
 		todoController.Register(groupV1)
 	}
 
 	healthController := wired.InitializeHealthController()
 	healthController.Register(apiRouteGroup)
 
+	return nil
 }
 
-//Setup returns AppEngine
-func Setup() *AppEngine {
+//NewApp returns App
+func NewApp() (*App, error) {
 	router := gin.Default()
+
 	apiRouteGroup := router.Group("/api")
 
-	registerHandlers(apiRouteGroup)
+	err := registerHandlers(apiRouteGroup)
+
+	if err != nil {
+		return nil, err
+	}
 
 	//Opentracing configuration
 	traceCloser := tracer.Init()
@@ -40,12 +49,12 @@ func Setup() *AppEngine {
 	//Swagger Configuration
 	router.GET("/swagger/*any", ginSwagger.DisablingWrapHandler(swaggerFiles.Handler, ""))
 
-	return &AppEngine{
+	return &App{
 		Close: func() error {
 			return traceCloser.Close()
 		},
-		Run: func() error {
+		Start: func() error {
 			return router.Run()
 		},
-	}
+	}, nil
 }
