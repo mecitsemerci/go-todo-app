@@ -1,0 +1,68 @@
+<div class="card-row">
+  <div class="card-col">
+    <nb-card>
+      <nb-card-body class="toolbar">
+        <input type="text" nbInput fieldSize="medium" placeholder="Title" />
+        <input
+          type="text"
+          nbInput
+          fieldSize="medium"
+          placeholder="Description"
+        />
+
+        <nb-select
+          placeholder="Priority"
+          size="medium"
+          [(selected)]="selectedItem"
+        >
+          <nb-option value="0">None</nb-option>
+          <nb-option value="1">Normal</nb-option>
+          <nb-option value="2">High</nb-option>
+          <nb-option value="3">Critical</nb-option>
+        </nb-select>
+        <button
+          nbButton
+          size="medium"
+          status="success"
+          style="float: right"
+          (click)="fetchTodos()"
+        >
+          <nb-icon icon="plus"></nb-icon> Add
+        </button>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>
+<div class="card-row">
+  <div class="card-col">
+    <nb-card
+      accent="danger"
+      size="large"
+      [nbSpinner]="loading"
+      nbSpinnerStatus="success"
+      nbSpinnerSize="large"
+      nbSpinnerMessage="Loading..."
+    >
+      <nb-card-header>
+        <h5 style="display: inline-flex">Todo List</h5>
+        <button
+          size="small"
+          style="float: right; display: inline-flex"
+          nbButton
+          status="primary"
+          (click)="fetchTodos()"
+        >
+          <nb-icon icon="refresh"></nb-icon> Refresh
+        </button></nb-card-header
+      >
+      <nb-list>
+        <nb-list-item *ngFor="let todo of todos">
+          <nb-checkbox #checkbox (change)="completeTask($event)"
+            >{{ todo.title }}
+          </nb-checkbox>
+        </nb-list-item>
+      </nb-list>
+      <nb-card-footer> Items Count: {{ todos.length }}</nb-card-footer>
+    </nb-card>
+  </div>
+</div>

@@ -1,0 +1,20 @@
+.toolbar {
+
+  align-items: center;
+}
+
+.toolbar button {
+  margin: 0 10px;
+}
+
+.toolbar button:first-of-type {
+  margin-left: 0;
+}
+
+.toolbar button:last-of-type {
+  margin-right: 0;
+}
+
+.toolbar input {
+  margin: 0 10px;
+}
