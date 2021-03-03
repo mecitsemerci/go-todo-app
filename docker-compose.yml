@@ -2,6 +2,14 @@ version: '3'
 # Define services
 services:
   # App Services
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    ports:
+    - "5000:80"
+    depends_on:
+      - api
   api:
     # Configuration for building the docker image for the service
     build:

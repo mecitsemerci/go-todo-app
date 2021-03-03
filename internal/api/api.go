@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/mecitsemerci/go-todo-app/internal/pkg/tracer"
 	"github.com/mecitsemerci/go-todo-app/internal/wired"
@@ -34,6 +35,9 @@ func registerHandlers(apiRouteGroup *gin.RouterGroup) error {
 //NewApp returns App
 func NewApp() (*App, error) {
 	router := gin.Default()
+
+	//Middleware
+	router.Use(cors.Default())
 
 	apiRouteGroup := router.Group("/api")
 
