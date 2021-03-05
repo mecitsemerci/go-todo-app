@@ -22,20 +22,31 @@ import {
   NbButtonGroupModule,
   NbInputModule,
   NbSelectModule,
-  NbAlertModule
+  NbAlertModule,
+  NbToastrService,
+  NbToastrModule,
+  NbContextMenuModule,
+  NbMenuService,
+  NbMenuModule,
+  NbWindowModule,
+  NbWindowService,
 } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { TodoListComponent } from './components/todo-list/todo-list.component';
 import { TodoService } from './services/todo-service/todo.service';
-
+import { ReactiveFormsModule } from '@angular/forms';
+import { TodoEditComponent } from './components/todo-edit/todo-edit.component';
 @NgModule({
-  declarations: [AppComponent, TodoListComponent],
+  declarations: [AppComponent, TodoListComponent, TodoEditComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    NbThemeModule.forRoot({ name: 'corporate' }),
+    NbThemeModule.forRoot({ name: 'default' }),
+    NbMenuModule.forRoot(),
+    NbWindowModule.forRoot({}),
+    NbToastrModule.forRoot({}),
     NbLayoutModule,
     NbEvaIconsModule,
     NbButtonModule,
@@ -51,9 +62,17 @@ import { TodoService } from './services/todo-service/todo.service';
     NbButtonGroupModule,
     NbInputModule,
     NbSelectModule,
-    NbAlertModule
+    NbAlertModule,
+    ReactiveFormsModule,
+    NbContextMenuModule,
   ],
-  providers: [TodoService, NbSidebarService],
+  providers: [
+    TodoService,
+    NbSidebarService,
+    NbToastrService,
+    NbMenuService,
+    NbWindowService,
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

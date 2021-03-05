@@ -2,33 +2,44 @@
   <div class="card-col">
     <nb-card>
       <nb-card-body class="toolbar">
-        <input type="text" nbInput fieldSize="medium" placeholder="Title" />
-        <input
-          type="text"
-          nbInput
-          fieldSize="medium"
-          placeholder="Description"
-        />
+        <form [formGroup]="addNewTodoForm" (ngSubmit)="addNewTodoSubmit()">
+          <input
+            type="text"
+            nbInput
+            required
+            fieldSize="medium"
+            placeholder="Title"
+            formControlName="title"
+          />
+          <input
+            type="text"
+            nbInput
+            fieldSize="medium"
+            placeholder="Description"
+            formControlName="description"
+          />
 
-        <nb-select
-          placeholder="Priority"
-          size="medium"
-          [(selected)]="selectedItem"
-        >
-          <nb-option value="0">None</nb-option>
-          <nb-option value="1">Normal</nb-option>
-          <nb-option value="2">High</nb-option>
-          <nb-option value="3">Critical</nb-option>
-        </nb-select>
-        <button
-          nbButton
-          size="medium"
-          status="success"
-          style="float: right"
-          (click)="fetchTodos()"
-        >
-          <nb-icon icon="plus"></nb-icon> Add
-        </button>
+          <nb-select
+            placeholder="Priority"
+            size="medium"
+            formControlName="priority_level"
+            [(selected)]="selectedPriorityLevel"
+          >
+            <nb-option *ngFor="let level of priorityLevels" [value]="level">{{
+              level.name
+            }}</nb-option>
+          </nb-select>
+          <button
+            nbButton
+            size="medium"
+            status="success"
+            style="float: right"
+            type="submit"
+            [disabled]="!addNewTodoForm.valid"
+          >
+            <nb-icon icon="plus"></nb-icon> Add
+          </button>
+        </form>
       </nb-card-body>
     </nb-card>
   </div>
@@ -45,6 +56,7 @@
     >
       <nb-card-header>
         <h5 style="display: inline-flex">Todo List</h5>
+
         <button
           size="small"
           style="float: right; display: inline-flex"
@@ -56,13 +68,24 @@
         </button></nb-card-header
       >
       <nb-list>
-        <nb-list-item *ngFor="let todo of todos">
-          <nb-checkbox #checkbox (change)="completeTask($event)"
+        <nb-list-item
+          class="todo-item"
+          *ngFor="let todo of todos"
+          [attr.data-id]="todo.id"
+          [ngClass]="{ completed: todo.completed }"
+        >
+          <nb-checkbox
+            #checkbox
+            (change)="completeTask($event, todo)"
+            [checked]="todo.completed"
             >{{ todo.title }}
           </nb-checkbox>
+          <button nbButton size="small" [nbContextMenu]="contextItems" nbContextMenuTag="action-context-menu-{{todo.id}}">
+            <nb-icon icon="more-vertical-outline"></nb-icon>
+          </button>
         </nb-list-item>
       </nb-list>
-      <nb-card-footer> Items Count: {{ todos.length }}</nb-card-footer>
+      <nb-card-footer> Items Count: {{ todos.length }} </nb-card-footer>
     </nb-card>
   </div>
 </div>

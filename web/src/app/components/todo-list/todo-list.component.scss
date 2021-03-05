@@ -18,3 +18,14 @@
 .toolbar input {
   margin: 0 10px;
 }
+
+.completed {
+  -webkit-text-decoration-line: line-through;
+  /* Safari */
+  text-decoration-line: line-through;
+  background-color: rgb(229, 230, 233);
+}
+
+.todo-item {
+  justify-content: space-between;
+}
