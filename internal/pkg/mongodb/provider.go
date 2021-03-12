@@ -27,6 +27,6 @@ func ProvideMongoClient() (*mongo.Client, error) {
 }
 
 //ProvideTodoRepository provides mongodb adapter
-func ProvideTodoRepository(client *mongo.Client, ) interfaces.TodoRepository {
+func ProvideTodoRepository(client *mongo.Client) interfaces.TodoRepository {
 	return NewTodoAdapter(client, config.MongoTodoDbName)
 }
