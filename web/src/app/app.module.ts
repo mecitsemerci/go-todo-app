@@ -31,7 +31,7 @@ import {
   NbWindowModule,
   NbWindowService,
   NbProgressBarModule,
-  NbRadioModule
+  NbRadioModule,
 } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { TodoListComponent } from './components/todo-list/todo-list.component';
@@ -70,7 +70,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     NbContextMenuModule,
     NbProgressBarModule,
     NgbModule,
-    NbRadioModule
+    NbRadioModule,
   ],
   providers: [
     TodoService,

@@ -67,6 +67,7 @@
             #checkbox
             (change)="completeTask($event, todo)"
             [checked]="todo.completed"
+            status="{{checkBoxStatus[todo.priority_level]}}"
             >{{ todo.title }}
           </nb-checkbox>
           <button

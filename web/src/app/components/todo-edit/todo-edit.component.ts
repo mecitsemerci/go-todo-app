@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { NbWindowRef } from '@nebular/theme';
+import {
+  NbComponentStatus,
+  NbToastrService,
+  NbWindowRef,
+} from '@nebular/theme';
 import { TodoService } from 'src/app/services/todo-service/todo.service';
 import { FormControl, FormGroup } from '@angular/forms';
 import { UpdateTodo } from 'src/app/models/todo';
-import { NbToastrService, NbComponentStatus } from '@nebular/theme';
+
 @Component({
   selector: 'app-todo-edit',
   templateUrl: './todo-edit.component.html',
@@ -25,6 +29,7 @@ export class TodoEditComponent implements OnInit {
     priority_level: new FormControl('0'),
     completed: new FormControl(''),
   });
+
 
   constructor(
     protected windowRef: NbWindowRef,
@@ -65,23 +70,13 @@ export class TodoEditComponent implements OnInit {
 
     this.todoService.updateTodo(this.todoID, updatedTodo).subscribe({
       next: (d) => {
-        console.log('updated');
         this.showSuccess('The item has been updated successfully.');
       },
       error: (err) => {
-        this.showError(err.error.message)
-        console.log(err);
+        this.showError(err.error.message);
       },
-      complete: () => {
-        console.log('complete');
-      },
+      complete: () => {},
     });
-  }
-
-  updateTodoEnterSubmit(event: any): void {
-    if (event.keyCode === 13) {
-      this.updateTodoSubmit();
-    }
   }
 
   showToast(message: string, title: string, nbStatus: NbComponentStatus): void {
@@ -94,10 +89,8 @@ export class TodoEditComponent implements OnInit {
   showSuccess(message: string): void {
     this.showToast(message, 'Success', 'success');
   }
+
   showError(message: string): void {
     this.showToast(message, 'Error', 'danger');
-  }
-  showInfo(message: string): void {
-    this.showToast(message, 'Info', 'info');
   }
 }

@@ -20,7 +20,7 @@ export class TodoListComponent implements OnInit {
   loading = false;
   contextItem: any;
   contextItems = [
-    { title: 'View', id: 'view' },
+    { title: 'Edit', id: 'edit' },
     { title: 'Delete', id: 'delete' },
   ];
 
@@ -29,6 +29,8 @@ export class TodoListComponent implements OnInit {
     description: new FormControl(''),
     priority_level: new FormControl(''),
   });
+
+  checkBoxStatus = ['basic', 'primary', 'warning', 'danger'];
 
   constructor(
     private todoService: TodoService,
@@ -47,8 +49,8 @@ export class TodoListComponent implements OnInit {
         const todoID = event.tag.split('-').pop();
         if (event.item.id === 'delete') {
           this.deleteTodo(todoID);
-        } else if (event.item.id === 'view') {
-          const result = this.todoService.getTodo(todoID).subscribe(
+        } else if (event.item.id === 'edit') {
+          this.todoService.getTodo(todoID).subscribe(
             (res) => {
               this.openTodoEditModal((res as Todo).id);
             },
@@ -181,10 +183,12 @@ export class TodoListComponent implements OnInit {
   }
 
   openTodoEditModal(id: string): void {
-    this.windowService.open(TodoEditComponent, {
-      title: `Edit`,
-      context: { todoID: id },
-    });
+    this.windowService
+      .open(TodoEditComponent, {
+        title: `Edit`,
+        context: { todoID: id },
+      })
+      .onClose.subscribe(() => this.fetchTodos());
   }
 
   hideCompletedItems(): void {
