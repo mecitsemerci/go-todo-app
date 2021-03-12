@@ -1,0 +1,39 @@
+<form
+  [formGroup]="updateTodoForm"
+  class="form-horizontal update-todo-form"
+  (ngSubmit)="updateTodoSubmit()"
+>
+  <div class="form-group">
+    <label>Title</label>
+    <input
+      formControlName="title"
+      type="text"
+      nbInput
+      required
+      fullWidth
+      class="form-control"
+    />
+  </div>
+  <div class="form-group">
+    <label>Description</label>
+    <textarea
+      formControlName="description"
+      nbInput
+      fullWidth
+      class="form-control"
+    ></textarea>
+  </div>
+  <div class="form-group">
+    <label>Priority</label>
+    <nb-radio-group formControlName="priority_level">
+      <nb-radio *ngFor="let option of options" [value]="option.value">{{
+        option.label
+      }}</nb-radio>
+    </nb-radio-group>
+  </div>
+  <div class="form-group">
+    <button nbButton size="medium" status="success" type="submit">
+      Update
+    </button>
+  </div>
+</form>

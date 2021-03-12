@@ -14,11 +14,15 @@ import (
 // @host localhost:8080
 // @BasePath /
 func main() {
-	engine := api.Setup()
+	app, err := api.NewAppServer()
 
-	if err := engine.Run(); err != nil {
+	if err != nil {
+		log.Fatalf("AppServer Error: %s", err.Error())
+	}
+	defer app.Close()
+
+	if err := app.Start(); err != nil {
 		log.Printf("%s", err.Error())
 		os.Exit(1)
 	}
-	defer engine.Close()
 }

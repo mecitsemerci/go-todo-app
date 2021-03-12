@@ -1,0 +1,28 @@
+.add-form {
+  display: flex;
+  align-items: center;
+}
+
+.add-form button {
+  margin: 0 0.1rem;
+}
+
+.fetch-button {
+  float: right;
+  display: inline-flex;
+}
+
+.completed {
+  -webkit-text-decoration-line: line-through;
+  /* Safari */
+  text-decoration-line: line-through;
+  background-color: rgb(229, 230, 233);
+}
+
+.todo-item {
+  justify-content: space-between;
+}
+
+.hide-toggle {
+  float: right
+}

@@ -1,18 +1,27 @@
 ![Go](https://github.com/mecitsemerci/go-todo-app/workflows/Go/badge.svg?branch=master)
 
-# Clean Architecture Go Project Template
+# Go + Angular Project Template
 
-This repository is a sample go lang web project built according to Clean Architecture.  
+This repository is a todo sample go and angular web project built according to Clean Architecture.  
 
 ## Technologies
-* Web Framework (gin-gonic)
-* Docker
+* Go Web Framework (gin-gonic)
+* Containerize (Docker)
 * Swagger (swaggo)
-* NoSQL Database
+* Database
     * Mongodb (default)
     * Redis (soon)
-* Dependency Injection (wire)
+* Dependency Injection (wire by google)
 * Unit/Integration Tests (testify)
+* Tracing (opentracing)
+* WebUI (Angular 11)
+
+### Web UI Preview
+![GitHub Logo](./docs/img/angular_ui.gif)
+
+### Open API Doc Preview
+![GitHub Logo](./docs/img/swagger_ui.jpg)
+
 
 ## Layers and Dependencies
 
@@ -36,3 +45,20 @@ Web application specific components: static web assets, server side templates an
 open api (swagger) docs files. Swaggo generates automatically. 
 
     swag init -g ./cmd/api/main.go -o ./docs
+
+
+### Usage
+
+Open your terminal and clone the repository
+
+    git clone https://github.com/mecitsemerci/go-todo-app.git
+
+If docker is running, run docker compose up command in the project folder.
+
+    docker-compose up
+
+Application | URL
+------------ | -------------
+Web UI | http://localhost:5000
+Swagger UI | http://localhost:8080/swagger/index.html
+Jaeger UI | http://localhost:16686/

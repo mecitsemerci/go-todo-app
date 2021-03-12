@@ -1,0 +1,104 @@
+<div class="card-row">
+  <div class="card-col">
+    <nb-card>
+      <nb-card-body class="toolbar">
+        <form
+          #addTodoForm
+          class="form-horizontal add-form"
+          [formGroup]="addNewTodoForm"
+          (keydown)="enterSubmit($event)"
+          (ngSubmit)="addNewTodoSubmit($event)"
+        >
+          <input
+            type="text"
+            nbInput
+            required
+            fullWidth
+            fieldSize="medium"
+            placeholder="Add new Todo"
+            formControlName="title"
+          />
+          <button
+            nbButton
+            size="medium"
+            status="success"
+            style="float: right"
+            type="submit"
+            [disabled]="!addNewTodoForm.valid"
+          >
+            <nb-icon icon="plus"></nb-icon> Add
+          </button>
+        </form>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>
+<div class="card-row">
+  <div class="card-col">
+    <nb-card
+      accent="danger"
+      size="large"
+      [nbSpinner]="loading"
+      nbSpinnerStatus="success"
+      nbSpinnerSize="large"
+      nbSpinnerMessage="Loading..."
+    >
+      <nb-card-header>
+        <h5 style="display: inline-flex">Todo List</h5>
+
+        <button
+          size="small"
+          nbButton
+          status="primary"
+          (click)="fetchTodos()"
+          class="fetch-button"
+        >
+          <nb-icon icon="refresh"></nb-icon> Refresh
+        </button></nb-card-header
+      >
+      <nb-list>
+        <nb-list-item
+          class="todo-item"
+          *ngFor="let todo of getTodos()"
+          [attr.data-id]="todo.id"
+          [ngClass]="{ completed: todo.completed }"
+        >
+          <nb-checkbox
+            #checkbox
+            (change)="completeTask($event, todo)"
+            [checked]="todo.completed"
+            status="{{checkBoxStatus[todo.priority_level]}}"
+            >{{ todo.title }}
+          </nb-checkbox>
+          <button
+            nbButton
+            size="small"
+            [nbContextMenu]="contextItems"
+            nbContextMenuTag="action-context-menu-{{ todo.id }}"
+          >
+            <nb-icon icon="more-vertical-outline"></nb-icon>
+          </button>
+        </nb-list-item>
+      </nb-list>
+      <nb-card-footer>
+        <nb-actions fullWidth>
+          <nb-action>Total Items: {{ todos.length }}</nb-action>
+          <nb-action
+            ><nb-toggle
+              labelPosition="left"
+              (change)="hideCompletedItems()"
+              [(checked)]="hideCompleted"
+              class="hide-toggle"
+              >Hide completed</nb-toggle
+            ></nb-action
+          >
+        </nb-actions>
+      </nb-card-footer>
+    </nb-card>
+    <nb-progress-bar
+      status="success"
+      [value]="completedTodoPercentage()"
+      [displayValue]="true"
+    ></nb-progress-bar>
+  </div>
+</div>

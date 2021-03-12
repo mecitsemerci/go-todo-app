@@ -1,0 +1,20 @@
+<nb-layout center>
+  <nb-layout-header fixed class="header-color">
+    <nb-actions size="large">
+      <nb-action icon="checkmark-square-outline"></nb-action>
+      <nb-action><h1>Todo APP</h1></nb-action>
+    </nb-actions>
+  </nb-layout-header>
+
+  <nb-layout-column>
+    <app-todo-list></app-todo-list>
+  </nb-layout-column>
+</nb-layout>
+<div class="container-fluid">
+  <div class="row show-grid">
+    <div class="col-sm-12 col-md-4">Column 1</div>
+    <div class="col-sm-12 col-md-4">Column 2</div>
+    <div class="col-sm-12 col-md-4">Column 3</div>
+  </div>
+</div>
+<router-outlet></router-outlet>

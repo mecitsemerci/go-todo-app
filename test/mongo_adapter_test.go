@@ -31,9 +31,12 @@ var (
 
 //region TestSetup
 func setup() {
+	if err := config.Load(); err != nil {
+		log.Fatal(err)
+	}
 	ctx, cancel := context.WithTimeout(context.Background(), timeout*time.Second)
 	defer cancel()
-	if client, err := mongo.Connect(ctx, options.Client().ApplyURI(config.MongoURL)); err != nil {
+	if client, err := mongo.Connect(ctx, options.Client().ApplyURI(config.MongoConfig.MongoURL)); err != nil {
 		log.Fatalf("provide mongodb: %s", err.Error())
 	} else {
 		mongoClient = client
@@ -208,7 +211,7 @@ func Test_Insert_Should_Return_Error_When_Db_Connection_Not_Exist(t *testing.T) 
 	todoItem := createFakeTodo()
 	ctx, cancel := context.WithTimeout(context.Background(), timeout*time.Second)
 	defer cancel()
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(config.MongoURL))
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(config.MongoConfig.MongoURL))
 	assert.Nil(t, err)
 	adapter := mongodb.NewTodoAdapter(client, dbname)
 	err = client.Disconnect(ctx)

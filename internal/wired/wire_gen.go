@@ -14,13 +14,16 @@ import (
 
 // Injectors from wired.go:
 
-func InitializeTodoController() handler.TodoHandler {
-	client := mongodb.ProvideMongoClient()
+func InitializeTodoController() (handler.TodoHandler, error) {
+	client, err := mongodb.ProvideMongoClient()
+	if err != nil {
+		return handler.TodoHandler{}, err
+	}
 	todoRepository := mongodb.ProvideTodoRepository(client)
 	idGenerator := mongodb.ProvideIDGenerator()
 	todoService := services.ProvideTodoService(todoRepository, idGenerator)
 	todoHandler := handler.ProvideTodoHandler(todoService)
-	return todoHandler
+	return todoHandler, nil
 }
 
 // wired.go:

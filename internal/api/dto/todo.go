@@ -34,7 +34,7 @@ func (dto *TodoOutput) FromModel(todo todo.Todo) TodoOutput {
 //CreateTodoInput is an input dto for a creation todo item
 type CreateTodoInput struct {
 	Title       string             `json:"title" binding:"required"`
-	Description string             `json:"description" binding:"required"`
+	Description string             `json:"description,omitempty"`
 	Priority    enum.PriorityLevel `json:"priority_level,omitempty"`
 }
 
@@ -55,7 +55,7 @@ type CreateTodoOutput struct {
 //UpdateTodoInput is an update input dto for given todo id
 type UpdateTodoInput struct {
 	Title       string             `json:"title,omitempty" binding:"required"`
-	Description string             `json:"description,omitempty" binding:"required"`
+	Description string             `json:"description,omitempty"`
 	Priority    enum.PriorityLevel `json:"priority_level,omitempty"`
 	Completed   bool               `json:"completed,omitempty"`
 }
