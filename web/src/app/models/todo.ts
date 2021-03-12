@@ -3,11 +3,11 @@ import { NgZone } from '@angular/core';
 export interface Todo {
   id: string;
   title: string;
-  description?: string;
-  priority_level?: number;
+  description: string;
+  priority_level: number;
   completed: boolean;
-  create_at?: string;
-  update_at?: string;
+  create_at: string;
+  update_at: string;
 }
 
 export interface CreateTodo {
@@ -22,8 +22,8 @@ export interface CreateTodoResult {
 
 export interface UpdateTodo {
   title: string;
-  description?: string;
-  priority_level?: number;
+  description: string;
+  priority_level: number;
   completed: boolean;
 }
 

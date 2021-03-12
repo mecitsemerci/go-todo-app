@@ -30,12 +30,15 @@ import {
   NbMenuModule,
   NbWindowModule,
   NbWindowService,
+  NbProgressBarModule,
+  NbRadioModule
 } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { TodoListComponent } from './components/todo-list/todo-list.component';
 import { TodoService } from './services/todo-service/todo.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TodoEditComponent } from './components/todo-edit/todo-edit.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 @NgModule({
   declarations: [AppComponent, TodoListComponent, TodoEditComponent],
   imports: [
@@ -65,6 +68,9 @@ import { TodoEditComponent } from './components/todo-edit/todo-edit.component';
     NbAlertModule,
     ReactiveFormsModule,
     NbContextMenuModule,
+    NbProgressBarModule,
+    NgbModule,
+    NbRadioModule
   ],
   providers: [
     TodoService,

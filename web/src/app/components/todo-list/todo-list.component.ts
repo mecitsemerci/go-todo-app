@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TodoService } from '../../services/todo-service/todo.service';
 import {
   NbToastrService,
@@ -15,18 +15,12 @@ import { TodoEditComponent } from '../todo-edit/todo-edit.component';
   styleUrls: ['./todo-list.component.scss'],
 })
 export class TodoListComponent implements OnInit {
-  selectedPriorityLevel;
   todos: Todo[] = [];
+  hideCompleted: boolean;
   loading = false;
-  priorityLevels = [
-    { value: 0, name: 'None' },
-    { value: 1, name: 'Normal' },
-    { value: 2, name: 'High' },
-    { value: 3, name: 'Critical' },
-  ];
   contextItem: any;
   contextItems = [
-    { title: 'Details', id: 'details' },
+    { title: 'View', id: 'view' },
     { title: 'Delete', id: 'delete' },
   ];
 
@@ -42,7 +36,7 @@ export class TodoListComponent implements OnInit {
     private nbMenuService: NbMenuService,
     private windowService: NbWindowService
   ) {
-    this.selectedPriorityLevel = this.priorityLevels[0];
+    this.hideCompleted = false;
   }
 
   ngOnInit(): void {
@@ -50,16 +44,16 @@ export class TodoListComponent implements OnInit {
 
     this.nbMenuService.onItemClick().subscribe((event: any) => {
       if (event.tag.startsWith('action-context-menu')) {
-        let todoID = event.tag.split('-').pop();
+        const todoID = event.tag.split('-').pop();
         if (event.item.id === 'delete') {
           this.deleteTodo(todoID);
-        } else if (event.item.id === 'details') {
-          let result = this.todoService.getTodo(todoID).subscribe(
+        } else if (event.item.id === 'view') {
+          const result = this.todoService.getTodo(todoID).subscribe(
             (res) => {
               this.openTodoEditModal((res as Todo).id);
             },
             (err) => {
-              this.showToast(err.error.message, 'danger');
+              this.showError(err.error.message);
             }
           );
         }
@@ -67,72 +61,133 @@ export class TodoListComponent implements OnInit {
     });
   }
 
+  getTodos(): Todo[] {
+    return this.hideCompleted
+      ? this.todos.filter((t) => !t.completed)
+      : this.todos;
+  }
+
   fetchTodos(): void {
     this.loading = true;
-    this.todoService
-      .getTodos()
-      .subscribe((todos) => (this.todos = todos as Todo[]));
+    this.todoService.getTodos().subscribe({
+      next: (todos: any) => {
+        this.todos = todos as Todo[];
+      },
+      error: (err) => {
+        this.showError(err.error.message);
+      },
+      complete: () => {},
+    });
     setTimeout(() => (this.loading = false), 100);
   }
 
-  priorityChange(event: any): void {
-    console.log('Prior:', event.target.value);
+  completedTodoPercentage(): number {
+    if (this.todos === null || this.todos.length === 0) {
+      return 0;
+    }
+
+    const percentage =
+      (this.todos.filter((todo) => todo.completed).length / this.todos.length) *
+      100;
+    return Math.min(Math.max(parseFloat(percentage.toFixed()), 0), 100);
   }
 
   completeTask(event: any, todo: Todo): void {
     todo.completed = event.target.checked;
 
-    let updateTodo: UpdateTodo = {
+    const updateTodo: UpdateTodo = {
       title: todo.title,
       description: todo.description,
       completed: event.target.checked,
       priority_level: todo.priority_level,
     };
 
-    this.todoService.updateTodo(todo.id, updateTodo).subscribe(
-      (res) => {},
-      (err) => {
-        this.showToast(err.error.message, 'danger');
+    this.todoService.updateTodo(todo.id, updateTodo).subscribe({
+      next: (d) => {
+        this.showInfo('The item has been updated');
       },
-      () => this.fetchTodos()
-    );
+      error: (err) => {
+        this.showError(err.error.message);
+        console.error(err);
+      },
+      complete: () => this.fetchTodos(),
+    });
   }
 
-  addNewTodoSubmit(): void {
-    let createTodo: CreateTodo = {
+  enterSubmit(event: any): void {
+    if (event.keyCode === 13) {
+      this.addNewTodoSubmit(event);
+    }
+  }
+
+  addNewTodoSubmit(event: any): void {
+    event.preventDefault();
+    this.addNewTodo();
+  }
+
+  addNewTodo(): void {
+    const createTodo: CreateTodo = {
       title: this.addNewTodoForm.value.title,
-      description: this.addNewTodoForm.value.description,
-      priority_level: this.addNewTodoForm.value.priority_level.value,
+      description: '',
+      priority_level: 0,
     };
 
-    this.todoService.addTodo(createTodo).subscribe(
-      (res) => {
-        if (res.todo_id) {
-          this.showToast('Success', 'success');
+    this.todoService.addTodo(createTodo).subscribe({
+      next: (d) => {
+        if (d.todo_id) {
+          this.showSuccess('The item has been added');
+          this.clearForm();
           this.fetchTodos();
         }
       },
-      (err) => {
-        this.showToast(err.error.message, 'danger');
-      }
+      error: (err) => {
+        this.showError(err.error.message);
+        console.error(err);
+      },
+      complete: () => {},
+    });
+  }
+
+  clearForm(): void {
+    this.addNewTodoForm.reset();
+  }
+
+  showToast(message: string, title: string, nbStatus: NbComponentStatus): void {
+    setTimeout(
+      () => this.toastrService.show(message, title, { status: nbStatus }),
+      200
     );
   }
 
-  showToast(message: string, status: NbComponentStatus) {
-    this.toastrService.show(message, 'Message', { status: status });
+  showSuccess(message: string): void {
+    this.showToast(message, 'Success', 'success');
+  }
+  showError(message: string): void {
+    this.showToast(message, 'Error', 'danger');
+  }
+  showInfo(message: string): void {
+    this.showToast(message, 'Info', 'info');
   }
 
   deleteTodo(id: string): void {
-    this.todoService.deleteTodo(id).subscribe(
-      (res) => {},
-      (err) => {
-        this.showToast(err.error.message, 'danger');
+    this.todoService.deleteTodo(id).subscribe({
+      next: (d) => {},
+      error: (err) => {
+        this.showError(err.error.message);
+        console.error(err);
       },
-      () => this.fetchTodos()
-    );
+      complete: () => this.fetchTodos(),
+    });
   }
 
-  openTodoEditModal(id: string) {
-    this.windowService.open(TodoEditComponent, { title: `Window ${id}` });
+  openTodoEditModal(id: string): void {
+    this.windowService.open(TodoEditComponent, {
+      title: `Edit`,
+      context: { todoID: id },
+    });
+  }
+
+  hideCompletedItems(): void {
+    this.getTodos();
   }
 }

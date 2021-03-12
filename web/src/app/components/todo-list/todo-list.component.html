@@ -2,33 +2,22 @@
   <div class="card-col">
     <nb-card>
       <nb-card-body class="toolbar">
-        <form [formGroup]="addNewTodoForm" (ngSubmit)="addNewTodoSubmit()">
+        <form
+          #addTodoForm
+          class="form-horizontal add-form"
+          [formGroup]="addNewTodoForm"
+          (keydown)="enterSubmit($event)"
+          (ngSubmit)="addNewTodoSubmit($event)"
+        >
           <input
             type="text"
             nbInput
             required
+            fullWidth
             fieldSize="medium"
-            placeholder="Title"
+            placeholder="Add new Todo"
             formControlName="title"
           />
-          <input
-            type="text"
-            nbInput
-            fieldSize="medium"
-            placeholder="Description"
-            formControlName="description"
-          />
-
-          <nb-select
-            placeholder="Priority"
-            size="medium"
-            formControlName="priority_level"
-            [(selected)]="selectedPriorityLevel"
-          >
-            <nb-option *ngFor="let level of priorityLevels" [value]="level">{{
-              level.name
-            }}</nb-option>
-          </nb-select>
           <button
             nbButton
             size="medium"
@@ -59,10 +48,10 @@
 
         <button
           size="small"
-          style="float: right; display: inline-flex"
           nbButton
           status="primary"
           (click)="fetchTodos()"
+          class="fetch-button"
         >
           <nb-icon icon="refresh"></nb-icon> Refresh
         </button></nb-card-header
@@ -70,7 +59,7 @@
       <nb-list>
         <nb-list-item
           class="todo-item"
-          *ngFor="let todo of todos"
+          *ngFor="let todo of getTodos()"
           [attr.data-id]="todo.id"
           [ngClass]="{ completed: todo.completed }"
         >
@@ -80,12 +69,35 @@
             [checked]="todo.completed"
             >{{ todo.title }}
           </nb-checkbox>
-          <button nbButton size="small" [nbContextMenu]="contextItems" nbContextMenuTag="action-context-menu-{{todo.id}}">
+          <button
+            nbButton
+            size="small"
+            [nbContextMenu]="contextItems"
+            nbContextMenuTag="action-context-menu-{{ todo.id }}"
+          >
             <nb-icon icon="more-vertical-outline"></nb-icon>
           </button>
         </nb-list-item>
       </nb-list>
-      <nb-card-footer> Items Count: {{ todos.length }} </nb-card-footer>
+      <nb-card-footer>
+        <nb-actions fullWidth>
+          <nb-action>Total Items: {{ todos.length }}</nb-action>
+          <nb-action
+            ><nb-toggle
+              labelPosition="left"
+              (change)="hideCompletedItems()"
+              [(checked)]="hideCompleted"
+              class="hide-toggle"
+              >Hide completed</nb-toggle
+            ></nb-action
+          >
+        </nb-actions>
+      </nb-card-footer>
     </nb-card>
+    <nb-progress-bar
+      status="success"
+      [value]="completedTodoPercentage()"
+      [displayValue]="true"
+    ></nb-progress-bar>
   </div>
 </div>
