@@ -14,10 +14,10 @@ import (
 // @host localhost:8080
 // @BasePath /
 func main() {
-	app, err := api.NewApp()
+	app, err := api.NewAppServer()
 
 	if err != nil {
-		log.Fatalf("App Error: %s", err.Error())
+		log.Fatalf("AppServer Error: %s", err.Error())
 	}
 	defer app.Close()
 

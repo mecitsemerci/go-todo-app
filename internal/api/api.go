@@ -3,14 +3,15 @@ package api
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/mecitsemerci/go-todo-app/internal/config"
 	"github.com/mecitsemerci/go-todo-app/internal/pkg/tracer"
 	"github.com/mecitsemerci/go-todo-app/internal/wired"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 )
 
-//App application runtime
-type App struct {
+//AppServer application runtime
+type AppServer struct {
 	Close func() error
 	Start func() error
 }
@@ -32,18 +33,21 @@ func registerHandlers(apiRouteGroup *gin.RouterGroup) error {
 	return nil
 }
 
-//NewApp returns App
-func NewApp() (*App, error) {
+//NewAppServer returns AppServer
+func NewAppServer() (*AppServer, error) {
 	router := gin.Default()
+
+	//Application configuration
+	if err := config.Load(); err != nil {
+		return nil, err
+	}
 
 	//Middleware
 	router.Use(cors.Default())
 
 	apiRouteGroup := router.Group("/api")
 
-	err := registerHandlers(apiRouteGroup)
-
-	if err != nil {
+	if err := registerHandlers(apiRouteGroup); err != nil {
 		return nil, err
 	}
 
@@ -53,7 +57,7 @@ func NewApp() (*App, error) {
 	//Swagger Configuration
 	router.GET("/swagger/*any", ginSwagger.DisablingWrapHandler(swaggerFiles.Handler, ""))
 
-	return &App{
+	return &AppServer{
 		Close: func() error {
 			return traceCloser.Close()
 		},

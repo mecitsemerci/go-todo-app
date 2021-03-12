@@ -18,9 +18,9 @@ func ProvideIDGenerator() interfaces.IDGenerator {
 //ProvideMongoClient provides mongo client
 func ProvideMongoClient() (*mongo.Client, error) {
 	//Set Options
-	opts := options.Client().ApplyURI(config.MongoURL)
-	maxPoolSize := config.MongoMaxPoolSize
-	connTimeout := time.Duration(config.MongoConnectionTimeout) * time.Second
+	opts := options.Client().ApplyURI(config.MongoConfig.MongoURL)
+	maxPoolSize := config.MongoConfig.MongoMaxPoolSize
+	connTimeout := time.Duration(config.MongoConfig.MongoConnectionTimeout) * time.Second
 	opts.MaxPoolSize = &maxPoolSize
 	opts.ConnectTimeout = &connTimeout
 	return mongo.Connect(context.Background(), opts)
@@ -28,5 +28,5 @@ func ProvideMongoClient() (*mongo.Client, error) {
 
 //ProvideTodoRepository provides mongodb adapter
 func ProvideTodoRepository(client *mongo.Client) interfaces.TodoRepository {
-	return NewTodoAdapter(client, config.MongoTodoDbName)
+	return NewTodoAdapter(client, config.MongoConfig.MongoTodoDbName)
 }
