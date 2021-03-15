@@ -17,10 +17,10 @@ This repository is a todo sample go and angular web project built according to C
 * WebUI (Angular 11)
 
 ### Web UI Preview
-![GitHub Logo](./docs/img/angular_ui.gif)
+![GitHub Logo](https://github.com/mecitsemerci/blog/blob/master/src/images/angular_ui.gif?raw=true)
 
 ### Open API Doc Preview
-![GitHub Logo](./docs/img/swagger_ui.jpg)
+![GitHub Logo](https://github.com/mecitsemerci/blog/blob/master/src/images/swagger_ui.jpg?raw=true)
 
 
 ## Layers and Dependencies
