@@ -38,9 +38,7 @@ func NewAppServer() (*AppServer, error) {
 	router := gin.Default()
 
 	//Application configuration
-	if err := config.Load(); err != nil {
-		return nil, err
-	}
+	config.Load()
 
 	//Middleware
 	router.Use(cors.Default())
