@@ -29,6 +29,6 @@ func (controller *HealthController) Status(ctx *gin.Context) {
 	span := opentracing.GlobalTracer().StartSpan("HealthCheck")
 	defer span.Finish()
 	ctx.JSON(http.StatusOK, dto.HealthOutput{
-		Status: "ok",
+		Status: "pass",
 	})
 }
