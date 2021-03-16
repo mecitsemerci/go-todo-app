@@ -271,7 +271,6 @@ var doc = `{
         "dto.CreateTodoInput": {
             "type": "object",
             "required": [
-                "description",
                 "title"
             ],
             "properties": {
@@ -360,7 +359,6 @@ var doc = `{
         "dto.UpdateTodoInput": {
             "type": "object",
             "required": [
-                "description",
                 "title"
             ],
             "properties": {

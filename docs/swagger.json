@@ -256,7 +256,6 @@
         "dto.CreateTodoInput": {
             "type": "object",
             "required": [
-                "description",
                 "title"
             ],
             "properties": {
@@ -345,7 +344,6 @@
         "dto.UpdateTodoInput": {
             "type": "object",
             "required": [
-                "description",
                 "title"
             ],
             "properties": {

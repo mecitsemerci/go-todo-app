@@ -21,6 +21,9 @@ lint:
 
 .PHONY: lint
 
+swag:
+	swag init -g ./cmd/api/main.go -o ./docs
+
 wire-mongo:
 	wire ./internal/wired/mongo.go
 
