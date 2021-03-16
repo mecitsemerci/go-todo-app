@@ -46,7 +46,7 @@ export class TodoListComponent implements OnInit {
 
     this.nbMenuService.onItemClick().subscribe((event: any) => {
       if (event.tag.startsWith('action-context-menu')) {
-        const todoID = event.tag.split('-').pop();
+        const todoID = event.tag.split('#').pop();
         if (event.item.id === 'delete') {
           this.deleteTodo(todoID);
         } else if (event.item.id === 'edit') {
