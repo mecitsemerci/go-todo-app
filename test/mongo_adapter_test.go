@@ -31,9 +31,8 @@ var (
 
 //region TestSetup
 func setup() {
-	if err := config.Load(); err != nil {
-		log.Fatal(err)
-	}
+	config.Load()
+
 	ctx, cancel := context.WithTimeout(context.Background(), timeout*time.Second)
 	defer cancel()
 	if client, err := mongo.Connect(ctx, options.Client().ApplyURI(config.MongoConfig.MongoURL)); err != nil {
