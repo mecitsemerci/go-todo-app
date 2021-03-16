@@ -7,20 +7,19 @@ services:
       context: ./web
       dockerfile: Dockerfile
     ports:
-      - "5000:80"
+    - "5000:80"
     depends_on:
       - api
   api:
     # Configuration for building the docker image for the service
     build:
-      # Use an image built from the specified dockerfile in the current directory.
-      context: .
-      dockerfile: Dockerfile
+      context: . # Use an image built from the specified dockerfile in the current directory.
+      dockerfile: ./deployments/redis/Dockerfile
     environment:
-      - MONGO_URL=mongodb://mongo:27017
-      - MONGO_TODO_DB=TodoDb
-      - MONGO_MAX_POOL_SIZE=10
-      - MONGO_CONNECTION_TIMEOUT=20
+      - REDIS_URL=redis:6379
+      - REDIS_TODO_DB=0
+      - REDIS_MAX_POOL_SIZE=10
+      - REDIS_CONNECTION_TIMEOUT=20
       - JAEGER_AGENT_HOST=jaeger
       - JAEGER_AGENT_PORT=6831
       - JAEGER_SAMPLER_PARAM=1
@@ -30,12 +29,12 @@ services:
       - "8080:8080" # Forward the exposed port 8080 on the container to port 8080 on the host machine
     restart: unless-stopped
     depends_on:
-      - mongo
+      - redis
       - jaeger
-  mongo:
-    image: mongo:3
+  redis:
+    image: redis:6.2.1-alpine3.13
     ports:
-      - '27017:27017'
+      - '6379:6379'
   jaeger:
     image: jaegertracing/all-in-one:latest
     ports:

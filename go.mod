@@ -10,8 +10,9 @@ require (
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-playground/validator/v10 v10.3.0
+	github.com/go-redis/redis/v8 v8.7.1
 	github.com/google/uuid v1.2.0
-	github.com/google/wire v0.4.0
+	github.com/google/wire v0.5.0
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/stretchr/objx v0.2.0 // indirect
 	github.com/stretchr/testify v1.7.0

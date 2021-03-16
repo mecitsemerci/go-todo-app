@@ -9,7 +9,6 @@ definitions:
       title:
         type: string
     required:
-    - description
     - title
     type: object
   dto.CreateTodoOutput:
@@ -72,7 +71,6 @@ definitions:
       title:
         type: string
     required:
-    - description
     - title
     type: object
 host: localhost:8080

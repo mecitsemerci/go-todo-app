@@ -9,11 +9,14 @@ import (
 	"github.com/mecitsemerci/go-todo-app/internal/pkg/mongodb"
 )
 
-var TodoRepositorySet = wire.NewSet(mongodb.ProvideTodoRepository, mongodb.ProvideMongoClient)
-var TodoServiceSet = wire.NewSet(services.ProvideTodoService, TodoRepositorySet, mongodb.ProvideIDGenerator)
+// MongoDB Service Dependencies
+var TodoRepositorySetByMongo = wire.NewSet(mongodb.ProvideTodoRepository, mongodb.ProvideMongoClient)
+var TodoServiceSetByMongo = wire.NewSet(services.ProvideTodoService, TodoRepositorySetByMongo, mongodb.ProvideIDGenerator)
 
 func InitializeTodoController() (handler.TodoHandler, error) {
-	wire.Build(handler.ProvideTodoHandler, TodoServiceSet)
+
+	wire.Build(handler.ProvideTodoHandler, TodoServiceSetByMongo)
+
 	return handler.TodoHandler{}, nil
 }
 
