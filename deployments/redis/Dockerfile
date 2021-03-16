@@ -16,7 +16,7 @@ RUN go mod download
 # Generate Swagger document
 RUN go get github.com/swaggo/swag/cmd/swag && swag init -g ./cmd/api/main.go -o ./docs
 # Generate dependencies by wire
-RUN go get github.com/google/wire/cmd/wire && wire ./internal/wired/mongo.go
+RUN go get github.com/google/wire/cmd/wire && wire ./internal/wired/redis.go
 # Build the Go api
 RUN go build -o ./todoapi ./cmd/api
 

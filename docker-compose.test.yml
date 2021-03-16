@@ -2,20 +2,13 @@ version: '3'
 # Define services
 services:
   # App Services
-  web:
-    build:
-      context: ./web
-      dockerfile: Dockerfile
-    ports:
-      - "5000:80"
-    depends_on:
-      - api
   api:
     # Configuration for building the docker image for the service
     build:
       # Use an image built from the specified dockerfile in the current directory.
       context: .
       dockerfile: Dockerfile
+    container_name: todo_test_api
     environment:
       - MONGO_URL=mongodb://mongo:27017
       - MONGO_TODO_DB=TodoDb
@@ -31,16 +24,11 @@ services:
     restart: unless-stopped
     depends_on:
       - mongo
-      - jaeger
   mongo:
     image: mongo:3
+    container_name: todo_test_db
     ports:
       - '27017:27017'
-  jaeger:
-    image: jaegertracing/all-in-one:latest
-    ports:
-      - "6831:6831/udp"
-      - "5775:5775/udp"
-      - "16686:16686"
+
 
 
