@@ -99,12 +99,14 @@ This command builds docker services so if it's ok check same application urls.
 
   ### Dependency Injection
 
-  The project uses google wire for dependency injection. It comes from **wire_gen.go** for MongoDB. 
-  Docker compose files generates automatically **wire_gen.go**. You can check under the `/internal/wired/wire_gen.go` but if you want to use redis you must regenerate for redis.
+  The project uses google wire for compile time dependency injection. The project is set for **MongoDB** by default. 
+  Docker compose files generates automatically **wire_gen.go** in containers but, it must be created manually for local development. 
+  
+  Wire dependency file is `/internal/wired/wire_gen.go`
   
     make wire-redis
   
-  This command generates **wire_gen.go** with redis provider. When you check the **wire_gen.go** file, you will see that it generates again for redis
+  This command generates **wire_gen.go** with redis provider. When `wire_gen.go` file is checked, the following change will be seen.
 
   ```go
   // Injectors from redis.go:
@@ -122,15 +124,15 @@ This command builds docker services so if it's ok check same application urls.
   }
   ```
 
-  If you want to use MongoDB again, you can run the command below.
+  The following command can be run for **MongoDB** again
 
     make wire-mongo
   
-  You can observe the change in **wire_gen.go** after each change.
+  All changes can be observed in `/internal/wired/wire_gen.go` 
   
   ### Swagger
   
-  You can use the code below to extract the open api documents to `/docs` folder.
+  The command that generates the open api document to `/docs` folder.
 
     make swag
 
