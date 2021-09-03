@@ -8,8 +8,8 @@ require (
 	github.com/brianvoe/gofakeit/v6 v6.0.4
 	github.com/caarlos0/env/v6 v6.5.0
 	github.com/gin-contrib/cors v1.3.1
-	github.com/gin-gonic/gin v1.6.3
-	github.com/go-playground/validator/v10 v10.3.0
+	github.com/gin-gonic/gin v1.7.4
+	github.com/go-playground/validator/v10 v10.4.1
 	github.com/go-redis/redis/v8 v8.7.1
 	github.com/google/uuid v1.2.0
 	github.com/google/wire v0.5.0
@@ -20,6 +20,6 @@ require (
 	github.com/swaggo/swag v1.7.0
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
-	go.mongodb.org/mongo-driver v1.3.5
+	go.mongodb.org/mongo-driver v1.7.2
 	go.uber.org/atomic v1.7.0 // indirect
 )
