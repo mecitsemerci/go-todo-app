@@ -25,14 +25,14 @@ func NewTodoHandler(todoService interfaces.TodoService) TodoHandler {
 }
 
 //Register maps HTTP operations with methods according to the router group
-func (controller *TodoHandler) Register(apiRouteGroup *gin.RouterGroup) {
+func (h *TodoHandler) Register(apiRouteGroup *gin.RouterGroup) {
 	router := apiRouteGroup.Group("/todo")
 	{
-		router.GET("", controller.GetAll)
-		router.GET("/:id", controller.Find)
-		router.POST("", controller.Create)
-		router.PUT("/:id", controller.Update)
-		router.DELETE("/:id", controller.Delete)
+		router.GET("", h.GetAll)
+		router.GET("/:id", h.Find)
+		router.POST("", h.Create)
+		router.PUT("/:id", h.Update)
+		router.DELETE("/:id", h.Delete)
 	}
 }
 
@@ -46,12 +46,12 @@ func (controller *TodoHandler) Register(apiRouteGroup *gin.RouterGroup) {
 // @Failure 400 {object} dto.ErrorOutput
 // @Failure 422 {object} dto.ErrorOutput
 // @Router /api/v1/todo [get]
-func (controller *TodoHandler) GetAll(ctx *gin.Context) {
+func (h *TodoHandler) GetAll(ctx *gin.Context) {
 	span := opentracing.GlobalTracer().StartSpan("TodoHandler-GetAll")
 	spanContext := opentracing.ContextWithSpan(ctx.Request.Context(), span)
 	defer span.Finish()
 
-	todoList, err := controller.TodoService.GetAll(spanContext)
+	todoList, err := h.TodoService.GetAll(spanContext)
 	if err != nil {
 		httperror.NewError(ctx, http.StatusUnprocessableEntity, "Something went wrong!", err)
 		return
@@ -75,7 +75,7 @@ func (controller *TodoHandler) GetAll(ctx *gin.Context) {
 // @Failure 400 {object} dto.ErrorOutput
 // @Failure 404 {object} dto.ErrorOutput
 // @Router /api/v1/todo/{id} [get]
-func (controller *TodoHandler) Find(ctx *gin.Context) {
+func (h *TodoHandler) Find(ctx *gin.Context) {
 	span := opentracing.GlobalTracer().StartSpan("TodoHandler-Find")
 	spanContext := opentracing.ContextWithSpan(ctx.Request.Context(), span)
 	defer span.Finish()
@@ -87,7 +87,7 @@ func (controller *TodoHandler) Find(ctx *gin.Context) {
 		return
 	}
 
-	todoModel, err := controller.TodoService.Find(spanContext, domain.ID(todoID))
+	todoModel, err := h.TodoService.Find(spanContext, domain.ID(todoID))
 
 	if err != nil {
 		httperror.NewError(ctx, http.StatusUnprocessableEntity, "Item is not exist.", err)
@@ -110,7 +110,7 @@ func (controller *TodoHandler) Find(ctx *gin.Context) {
 // @Failure 400 {object} dto.ErrorOutput
 // @Failure 422 {object} dto.ErrorOutput
 // @Router /api/v1/todo [post]
-func (controller *TodoHandler) Create(ctx *gin.Context) {
+func (h *TodoHandler) Create(ctx *gin.Context) {
 	span := opentracing.GlobalTracer().StartSpan("TodoHandler-Create")
 	spanContext := opentracing.ContextWithSpan(ctx.Request.Context(), span)
 	defer span.Finish()
@@ -127,7 +127,7 @@ func (controller *TodoHandler) Create(ctx *gin.Context) {
 		return
 	}
 
-	todoID, err := controller.TodoService.Create(spanContext, createTodoInput.ToModel())
+	todoID, err := h.TodoService.Create(spanContext, createTodoInput.ToModel())
 
 	if err != nil {
 		httperror.NewError(ctx, http.StatusUnprocessableEntity, "The item failed to create.", err)
@@ -152,7 +152,7 @@ func (controller *TodoHandler) Create(ctx *gin.Context) {
 // @Failure 400 {object} dto.ErrorOutput
 // @Failure 404 {object} dto.ErrorOutput
 // @Router /api/v1/todo/{id} [put]
-func (controller *TodoHandler) Update(ctx *gin.Context) {
+func (h *TodoHandler) Update(ctx *gin.Context) {
 	span := opentracing.GlobalTracer().StartSpan("TodoHandler-Create")
 	spanContext := opentracing.ContextWithSpan(ctx.Request.Context(), span)
 	defer span.Finish()
@@ -178,7 +178,7 @@ func (controller *TodoHandler) Update(ctx *gin.Context) {
 
 	model := updateTodoInput.ToModel(todoID)
 
-	err := controller.TodoService.Update(spanContext, model)
+	err := h.TodoService.Update(spanContext, model)
 
 	if err != nil {
 		httperror.NewError(ctx, http.StatusNotFound, "The item failed to update.", err)
@@ -199,7 +199,7 @@ func (controller *TodoHandler) Update(ctx *gin.Context) {
 // @Failure 400 {object} dto.ErrorOutput
 // @Failure 404 {object} dto.ErrorOutput
 // @Router /api/v1/todo/{id} [delete]
-func (controller *TodoHandler) Delete(ctx *gin.Context) {
+func (h *TodoHandler) Delete(ctx *gin.Context) {
 	span := opentracing.GlobalTracer().StartSpan("TodoHandler-Create")
 	spanContext := opentracing.ContextWithSpan(ctx.Request.Context(), span)
 	defer span.Finish()
@@ -211,7 +211,7 @@ func (controller *TodoHandler) Delete(ctx *gin.Context) {
 		return
 	}
 
-	err := controller.TodoService.Delete(spanContext, domain.ID(todoID))
+	err := h.TodoService.Delete(spanContext, domain.ID(todoID))
 
 	if err != nil {
 		httperror.NewError(ctx, http.StatusNotFound, "The item failed to delete.", err)

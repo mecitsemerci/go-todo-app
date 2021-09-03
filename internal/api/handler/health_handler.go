@@ -9,12 +9,12 @@ import (
 	"github.com/mecitsemerci/go-todo-app/internal/api/dto"
 )
 
-//HealthController handles all health check operations
-type HealthController struct{}
+//HealthHandler handles all health check operations
+type HealthHandler struct{}
 
 //Register maps HTTP operations with methods according to the router group
-func (controller *HealthController) Register(apiRouteGroup *gin.RouterGroup) {
-	apiRouteGroup.GET("/status", controller.Status)
+func (h *HealthHandler) Register(apiRouteGroup *gin.RouterGroup) {
+	apiRouteGroup.GET("/status", h.Status)
 }
 
 // Status Health check godoc
@@ -25,7 +25,7 @@ func (controller *HealthController) Register(apiRouteGroup *gin.RouterGroup) {
 // @Produce json
 // @Success 200 {object} dto.HealthOutput
 // @Router /api/status [get]
-func (controller *HealthController) Status(ctx *gin.Context) {
+func (h *HealthHandler) Status(ctx *gin.Context) {
 	span := opentracing.GlobalTracer().StartSpan("HealthCheck")
 	defer span.Finish()
 	ctx.JSON(http.StatusOK, dto.HealthOutput{

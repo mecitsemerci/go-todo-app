@@ -111,7 +111,7 @@ This command builds docker services so if it's ok check same application urls.
   ```go
   // Injectors from redis.go:
   
-  func InitializeTodoController() (handler.TodoHandler, error) {
+  func InitializeTodoHandler() (handler.TodoHandler, error) {
       client, err := redisdb.ProvideRedisClient()
       if err != nil {
           return handler.TodoHandler{}, err

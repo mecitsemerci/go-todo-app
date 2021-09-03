@@ -10,6 +10,7 @@ import (
 //Todo represents information
 type Todo struct {
 	ID          domain.ID
+	ProjectID   domain.ID
 	Title       string
 	Description string
 	Completed   bool
