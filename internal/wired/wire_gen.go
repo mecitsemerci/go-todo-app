@@ -14,7 +14,7 @@ import (
 
 // Injectors from mongo.go:
 
-func InitializeTodoController() (handler.TodoHandler, error) {
+func InitializeTodoHandler() (handler.TodoHandler, error) {
 	client, err := mongodb.ProvideMongoClient()
 	if err != nil {
 		return handler.TodoHandler{}, err
@@ -33,6 +33,6 @@ var TodoRepositorySetByMongo = wire.NewSet(mongodb.ProvideTodoRepository, mongod
 
 var TodoServiceSetByMongo = wire.NewSet(services.ProvideTodoService, TodoRepositorySetByMongo, mongodb.ProvideIDGenerator)
 
-func InitializeHealthController() handler.HealthController {
-	return handler.HealthController{}
+func InitializeHealthHandler() handler.HealthHandler {
+	return handler.HealthHandler{}
 }

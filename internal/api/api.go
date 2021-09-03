@@ -20,15 +20,15 @@ func registerHandlers(apiRouteGroup *gin.RouterGroup) error {
 
 	groupV1 := apiRouteGroup.Group("/v1")
 	{
-		todoController, err := wired.InitializeTodoController()
+		todoHandler, err := wired.InitializeTodoHandler()
 		if err != nil {
 			return err
 		}
-		todoController.Register(groupV1)
+		todoHandler.Register(groupV1)
 	}
 
-	healthController := wired.InitializeHealthController()
-	healthController.Register(apiRouteGroup)
+	healthHandler := wired.InitializeHealthHandler()
+	healthHandler.Register(apiRouteGroup)
 
 	return nil
 }
