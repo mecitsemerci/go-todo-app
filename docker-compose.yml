@@ -26,6 +26,7 @@ services:
       - JAEGER_SAMPLER_PARAM=1
       - JAEGER_SAMPLER_TYPE=probabilistic
       - JAEGER_SERVICE_NAME=go-todo-app
+      - GIN_MODE=debug
     ports:
       - "8080:8080" # Forward the exposed port 8080 on the container to port 8080 on the host machine
     restart: unless-stopped
