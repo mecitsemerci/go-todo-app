@@ -183,7 +183,7 @@ func (s *TodoServiceTestSuite) Test_Create_Todo_Should_Return_Error_When_Connect
 		Description: "Foo Description",
 		Completed:   false,
 	}
-	errorMessage := errors.New("database connection refused")
+	errorMessage := errors.New("insert failed: database connection refused")
 	s.MockTodoRepository.MockInsert = func(ctx context.Context, todo todo.Todo) (domain.ID, error) {
 		return domain.ZeroID, errorMessage
 	}
