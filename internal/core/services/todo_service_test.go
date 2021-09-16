@@ -2,15 +2,16 @@ package services
 
 import (
 	"context"
-	"errors"
 	"testing"
 	"time"
+
+	"github.com/pkg/errors"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 
 	"github.com/mecitsemerci/go-todo-app/internal/core/domain"
 	"github.com/mecitsemerci/go-todo-app/internal/core/domain/todo"
 	"github.com/mecitsemerci/go-todo-app/internal/core/mocks"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/suite"
 )
 
 type TodoServiceTestSuite struct {
@@ -194,7 +195,7 @@ func (s *TodoServiceTestSuite) Test_Create_Todo_Should_Return_Error_When_Connect
 
 	// Then
 	assert.NotNil(s.T(), err)
-	assert.Equal(s.T(), errorMessage.Error(), err.Error())
+	assert.Equal(s.T(), errors.Wrap(errorMessage, "insert failed").Error(), err.Error())
 	assert.Equal(s.T(), domain.ZeroID, id)
 }
 

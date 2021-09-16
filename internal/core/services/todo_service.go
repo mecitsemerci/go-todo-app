@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/opentracing/opentracing-go"
+	"github.com/pkg/errors"
 
 	"github.com/mecitsemerci/go-todo-app/internal/core/domain"
 	"github.com/mecitsemerci/go-todo-app/internal/core/domain/todo"
@@ -57,7 +58,7 @@ func (srv *TodoService) Create(ctx context.Context, todo todo.Todo) (domain.ID, 
 	id, err := srv.todoRepository.Insert(spanContext, todo)
 
 	if err != nil {
-		return domain.ZeroID, err
+		return domain.ZeroID, errors.Wrap(err, "insert failed")
 	}
 	return id, nil
 }

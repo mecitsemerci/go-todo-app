@@ -1,9 +1,11 @@
 package handler
 
 import (
+	"github.com/pkg/errors"
 	"net/http"
 
 	"github.com/opentracing/opentracing-go"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/gin-gonic/gin"
 	"github.com/mecitsemerci/go-todo-app/internal/api/dto"
@@ -53,6 +55,7 @@ func (h *TodoHandler) GetAll(ctx *gin.Context) {
 
 	todoList, err := h.TodoService.GetAll(spanContext)
 	if err != nil {
+		log.Error(errors.Wrap(err, "get all failed"))
 		httperror.NewError(ctx, http.StatusUnprocessableEntity, "Something went wrong!", err)
 		return
 	}
@@ -81,19 +84,18 @@ func (h *TodoHandler) Find(ctx *gin.Context) {
 	defer span.Finish()
 
 	todoID := ctx.Param("id")
-
 	if check.IsEmptyOrWhiteSpace(todoID) {
+		log.Error("todo ID is empty error")
 		httperror.NewError(ctx, http.StatusBadRequest, "ID is empty.", nil)
 		return
 	}
 
 	todoModel, err := h.TodoService.Find(spanContext, domain.ID(todoID))
-
 	if err != nil {
+		log.Error(errors.Wrap(err, "item not exist"))
 		httperror.NewError(ctx, http.StatusUnprocessableEntity, "Item is not exist.", err)
 		return
 	}
-
 	todoOutput := dto.TodoOutput{}
 
 	ctx.JSON(http.StatusOK, todoOutput.FromModel(todoModel))
@@ -118,11 +120,13 @@ func (h *TodoHandler) Create(ctx *gin.Context) {
 	var createTodoInput dto.CreateTodoInput
 
 	if err := ctx.ShouldBindJSON(&createTodoInput); err != nil {
+		log.Error(errors.Wrap(err, "invalid request error"))
 		httperror.NewError(ctx, http.StatusBadRequest, "Request model is invalid.", err)
 		return
 	}
 
 	if err := validator.Validate(createTodoInput); err != nil {
+		log.Error(errors.Wrap(err, "validation error"))
 		httperror.NewError(ctx, http.StatusBadRequest, "Validation error", err)
 		return
 	}
@@ -130,6 +134,7 @@ func (h *TodoHandler) Create(ctx *gin.Context) {
 	todoID, err := h.TodoService.Create(spanContext, createTodoInput.ToModel())
 
 	if err != nil {
+		log.Error(errors.Wrap(err, "item create error"))
 		httperror.NewError(ctx, http.StatusUnprocessableEntity, "The item failed to create.", err)
 		return
 	}
@@ -160,6 +165,7 @@ func (h *TodoHandler) Update(ctx *gin.Context) {
 	todoID := ctx.Param("id")
 
 	if check.IsEmptyOrWhiteSpace(todoID) {
+		log.Error("todo ID is empty error")
 		httperror.NewError(ctx, http.StatusBadRequest, "ID is invalid.", nil)
 		return
 	}
@@ -167,11 +173,13 @@ func (h *TodoHandler) Update(ctx *gin.Context) {
 	var updateTodoInput dto.UpdateTodoInput
 
 	if err := ctx.ShouldBindJSON(&updateTodoInput); err != nil {
+		log.Error(errors.Wrap(err, "invalid request error"))
 		httperror.NewError(ctx, http.StatusBadRequest, "Request model is invalid.", err)
 		return
 	}
 
 	if err := validator.Validate(updateTodoInput); err != nil {
+		log.Error(errors.Wrap(err, "validation error"))
 		httperror.NewError(ctx, http.StatusBadRequest, "Validation error", err)
 		return
 	}
@@ -181,6 +189,7 @@ func (h *TodoHandler) Update(ctx *gin.Context) {
 	err := h.TodoService.Update(spanContext, model)
 
 	if err != nil {
+		log.Error(errors.Wrap(err, "item update error"))
 		httperror.NewError(ctx, http.StatusNotFound, "The item failed to update.", err)
 		return
 	}
@@ -207,6 +216,7 @@ func (h *TodoHandler) Delete(ctx *gin.Context) {
 	todoID := ctx.Param("id")
 
 	if check.IsEmptyOrWhiteSpace(todoID) {
+		log.Error("todo ID is empty error")
 		httperror.NewError(ctx, http.StatusBadRequest, "ID is empty.", nil)
 		return
 	}
@@ -214,6 +224,7 @@ func (h *TodoHandler) Delete(ctx *gin.Context) {
 	err := h.TodoService.Delete(spanContext, domain.ID(todoID))
 
 	if err != nil {
+		log.Error(errors.Wrap(err, "item delete error"))
 		httperror.NewError(ctx, http.StatusNotFound, "The item failed to delete.", err)
 		return
 	}

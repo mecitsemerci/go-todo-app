@@ -5,16 +5,18 @@
 This repository is a todo sample go and angular web project built according to Clean Architecture.  
 
 ## Technologies
-* Go Web Framework (gin-gonic)
-* Containerize (Docker)
-* Swagger (swaggo)
+* Go Web Framework ([gin-gonic](https://github.com/gin-gonic/gin))
+* Containerize ([docker](https://www.docker.com/))
+* Swagger ([swaggo](https://github.com/swaggo/swag))
 * Database
-    * Mongodb (default)
-    * Redis
-* Dependency Injection (wire by google)
-* Unit/Integration Tests (testify)
-* Tracing (opentracing)
-* WebUI (Angular 11)
+    * [MongoDB](https://www.mongodb.com/) (default)
+    * [Redis](https://redis.io/)
+* Dependency Injection ([google wire](https://github.com/google/wire))
+* Unit/Integration Tests ([testify](https://github.com/stretchr/testify))
+* Tracing ([opentracing](https://github.com/opentracing/opentracing-go))
+* Logger ([logrus](https://github.com/sirupsen/logrus))
+* Error Wrapper ([pkg errors](https://github.com/pkg/errors))
+* WebUI ([Angular 11](https://angular.io/))
 
 ### Web UI Preview
 ![GitHub Logo](https://github.com/mecitsemerci/blog/blob/master/src/images/angular_ui.gif?raw=true)
