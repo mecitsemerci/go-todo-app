@@ -1,7 +1,7 @@
 # Dockerfile References: https://docs.docker.com/engine/reference/builder/
 
 ### STAGE 1: BUILD ###
-FROM golang:1.16.0-alpine as builder
+FROM golang:1.16.5-alpine as builder
 # The latest alpine images don't have some tools like (`git` and `bash`).
 # Adding git, bash and openssh to the image
 RUN apk update && apk upgrade && \

@@ -41,3 +41,6 @@ docker-redis-start:
 
 docker-redis-stop:
 	docker-compose -f ./docker-compose.redis.yml down
+
+format:
+	go fmt ./internal/...
