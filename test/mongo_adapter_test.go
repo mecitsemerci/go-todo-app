@@ -2,17 +2,15 @@ package test
 
 import (
 	"context"
+	"github.com/mecitsemerci/go-todo-app/config"
 	"log"
 	"os"
 	"testing"
 	"time"
 
 	"github.com/brianvoe/gofakeit/v6"
-	"github.com/mecitsemerci/go-todo-app/internal/config"
-	"github.com/mecitsemerci/go-todo-app/internal/core/domain"
 	"github.com/mecitsemerci/go-todo-app/internal/core/domain/todo"
-	"github.com/mecitsemerci/go-todo-app/internal/core/interfaces"
-	"github.com/mecitsemerci/go-todo-app/internal/pkg/mongodb"
+	"github.com/mecitsemerci/go-todo-app/internal/infra/mongodb"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -25,11 +23,11 @@ const (
 
 var (
 	mongoClient *mongo.Client
-	todoAdapter interfaces.TodoRepository
-	idGenerator interfaces.IDGenerator
+	todoAdapter todo.TodoRepository
+	idGenerator todo.IDGenerator
 )
 
-//region TestSetup
+// region TestSetup
 func setup() {
 	config.Load()
 
@@ -162,7 +160,7 @@ func Test_GetById_Should_Return_Error_When_Given_Item_ID_Empty(t *testing.T) {
 	//Given
 
 	//When
-	item, err := todoAdapter.GetByID(context.TODO(), domain.ZeroID)
+	item, err := todoAdapter.GetByID(context.TODO(), todo.ZeroID)
 
 	//Then
 	assert.NotNil(t, err)
@@ -195,7 +193,7 @@ func Test_Insert_Should_Return_ObjectId_When_Item_Created(t *testing.T) {
 func Test_Insert_Should_Return_Error_When_No_Given_Item_ID(t *testing.T) {
 	//Given
 	todoItem := createFakeTodo()
-	todoItem.ID = domain.ZeroID
+	todoItem.ID = todo.ZeroID
 
 	//When
 	id, err := todoAdapter.Insert(context.TODO(), todoItem)

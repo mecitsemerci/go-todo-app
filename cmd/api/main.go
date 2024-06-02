@@ -1,9 +1,10 @@
 package main
 
 import (
-	_ "github.com/mecitsemerci/go-todo-app/docs"
-	"github.com/mecitsemerci/go-todo-app/internal/api"
 	"log"
+
+	_ "github.com/mecitsemerci/go-todo-app/docs"
+	"github.com/mecitsemerci/go-todo-app/internal/app/api"
 )
 
 // @title Todo API

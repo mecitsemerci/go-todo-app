@@ -3,14 +3,13 @@ package todo
 import (
 	"time"
 
-	"github.com/mecitsemerci/go-todo-app/internal/core/domain"
 	"github.com/mecitsemerci/go-todo-app/internal/core/enum"
 )
 
-//Todo represents information
+// Todo represents information
 type Todo struct {
-	ID          domain.ID
-	ProjectID   domain.ID
+	ID          ID
+	ProjectID   ID
 	Title       string
 	Description string
 	Completed   bool
