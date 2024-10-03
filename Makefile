@@ -24,23 +24,9 @@ lint:
 swag:
 	swag init -g ./cmd/api/main.go -o ./docs
 
-wire-mongo:
-	wire ./internal/wired/mongo.go
-
-wire-redis:
-	wire ./internal/wired/redis.go
-
-docker-mongo-start:
-	docker-compose up --build
-
-docker-mongo-stop:
-	docker-compose down
-
-docker-redis-start:
-	docker-compose -f ./docker-compose.redis.yml up --build
-
-docker-redis-stop:
-	docker-compose -f ./docker-compose.redis.yml down
 
 format:
 	go fmt ./internal/...
+
+run:
+	air -c .air.toml

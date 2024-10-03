@@ -1,19 +1,18 @@
 package config
 
 import (
-	"github.com/caarlos0/env/v6"
+	"github.com/caarlos0/env/v11"
 )
 
 var (
-	//MongoConfig provides mongodb connection info
-	MongoConfig MongoConfiguration
-
-	//RedisConfig provides mongodb connection info
-	RedisConfig RedisConfiguration
+	AppConfig App
 )
 
 // Load initialize environment variables
-func Load() {
-	_ = env.Parse(&RedisConfig)
-	_ = env.Parse(&MongoConfig)
+func init() {
+	err := env.Parse(&AppConfig)
+
+	if err != nil {
+		panic(err)
+	}
 }
